@@ -8,6 +8,8 @@ A machine learning system that predicts NCAA Tournament outcomes using pre-tourn
 
 **View Complete 2025 Results [here](https://justin-alger.github.io/March-Methods/results_2025.html).**
 
+> _Select the "Bracket Score" tab for full score breakdown._
+
 ---
 
 ## Table of Contents
