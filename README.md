@@ -6,6 +6,8 @@ A machine learning system that predicts NCAA Tournament outcomes using pre-tourn
 
 **2025 holdout result: 84.1% game accuracy · 1,270/1,920 bracket points · ~96th percentile nationally (ESPN Tournament Challenge)**
 
+**View Complete 2025 Results [here](https://justin-alger.github.io/March-Methods/results_2025.html).**
+
 ---
 
 ## Table of Contents
