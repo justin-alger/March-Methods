@@ -43,7 +43,7 @@ The pipeline covers the full workflow end-to-end:
 
 ## Data
 
-### Team Season Stats (`cbb 2013-2025.xlsx`)
+### Team Season Stats
 
 Regular season stats for all Division I teams, sourced from Barttorvik (T-Rank) and College Basketball Reference. Each row is one team-season. The dataset covers 2013–2025, with 2020 excluded (no tournament due to COVID).
 
@@ -70,7 +70,7 @@ Regular season stats for all Division I teams, sourced from Barttorvik (T-Rank) 
 
 `WAB` (Wins Above Bubble) is also excluded. It is unavailable before Selection Sunday, making it unusable for pre-tournament prediction. Cross-validation performance was equal or slightly better without it.
 
-### Tournament Results (`bracket_games.csv`)
+### Tournament Results
 
 One row per tournament game, 2013–2025. Columns: `year`, `round`, `winner`, `winner_seed`, `loser`, `loser_seed`, `winner_score`, `loser_score`. First Four games (R68) are excluded. The model operates on the standard 64-team bracket only.
 
@@ -297,7 +297,7 @@ All predictions are generated from regular season stats only. In-tournament data
 
 - **Small training dataset.** With ~63 games per year and 12 years of data, the model trains on 756 games total. This is manageable but limits the ability to detect subtle patterns, particularly for late-round games where sample sizes are very small.
 
-- **Conference flags are static.** Power 5 membership is encoded using a fixed list. Conference realignment since 2013 (Big 12 departures, Pac-12 dissolution, etc.) is not explicitly modeled. This is a simplification.
+- **Conference flags are static.** Power 5 membership is encoded using a fixed list and is updated through 2025. With conference realignment the list is not explicitly modeled. This is a simplification.
 
 - **Tempo treated as neutral.** `ADJ_T` is included in absolute-average form but its differential is treated the same as other stats. In reality, teams with strong offensive tempo advantages may benefit more from slower games, or vice versa. A future version could encode tempo as a strategic matchup variable rather than a raw differential.
 
