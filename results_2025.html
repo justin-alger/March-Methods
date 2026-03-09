@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>March Methods — 2025 Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1923;--surface:#1a2535;--surface2:#223045;--border:#2e4060;
+  --text:#e8edf4;--muted:#7a8fa6;--accent:#f0c060;
+  --green:#4ade80;--red:#f87171;--blue:#60a5fa;
+  --font-head:'Barlow Condensed',sans-serif;--font-body:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh}
+.site-header{background:linear-gradient(180deg,#0a1018 0%,var(--bg) 100%);border-bottom:1px solid var(--border);padding:24px 32px 20px}
+.header-inner{max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.site-title{font-family:var(--font-head);font-size:2.6rem;font-weight:800;color:var(--accent);letter-spacing:.04em;line-height:1}
+.site-subtitle{font-family:var(--font-head);font-size:.95rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.site-subtitle a{color:var(--muted);text-decoration:none}.site-subtitle a:hover{color:var(--accent)}
+.header-badge{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);padding:6px 14px;border-radius:4px;letter-spacing:.08em;text-transform:uppercase}
+.tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:4px;overflow-x:auto}
+.tab{font-family:var(--font-head);font-weight:700;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 20px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.main{max-width:1300px;margin:0 auto;padding:32px}
+.panel{display:none}.panel.active{display:block}
+.section-title{font-family:var(--font-head);font-size:1.3rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.section-sub{font-size:.85rem;color:var(--muted);margin-bottom:20px}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:40px}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px 24px;text-align:center}
+.hero-card.primary{border-color:var(--accent);background:rgba(240,192,96,.07)}
+.hero-number{font-family:var(--font-head);font-size:3rem;font-weight:800;color:var(--accent);line-height:1}
+.hero-card.primary .hero-number{font-size:3.6rem}
+.hero-label{font-family:var(--font-head);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.hero-sub{font-size:.75rem;color:var(--muted);margin-top:4px}
+.round-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:40px}
+.round-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.round-name{font-family:var(--font-head);font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.round-pct{font-family:var(--font-head);font-size:2rem;font-weight:800;line-height:1}
+.round-games{font-size:.75rem;color:var(--muted);margin-top:4px}
+.round-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden}
+.round-bar-fill{height:100%;border-radius:2px}
+.round-section{margin-bottom:36px}
+.round-header{font-family:var(--font-head);font-size:1.1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text);border-left:3px solid var(--accent);padding-left:12px;margin-bottom:14px}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+.game-card.correct{border-left:3px solid var(--green)}.game-card.incorrect{border-left:3px solid var(--red)}
+.game-teams{font-family:var(--font-head);font-size:.95rem;font-weight:700;line-height:1.3;margin-bottom:6px}
+.team-winner{color:var(--text)}.team-loser{color:var(--muted);font-weight:400}
+.seed-badge{display:inline-block;font-size:.65rem;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:3px;padding:1px 5px;margin-right:4px}
+.game-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:.75rem}
+.game-prob{font-family:var(--font-head);font-weight:700;font-size:.85rem}
+.game-result-badge{font-family:var(--font-head);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+.badge-correct{background:rgba(74,222,128,.12);color:var(--green)}
+.badge-incorrect{background:rgba(248,113,113,.12);color:var(--red)}
+.badge-upset{background:rgba(96,165,250,.12);color:var(--blue)}
+.game-score{color:var(--muted);font-size:.72rem;margin-top:4px}
+.predicted-row{font-size:.72rem;color:var(--red);margin-top:4px}
+.wm-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px}
+@media(max-width:700px){.wm-grid{grid-template-columns:1fr}}
+.wm-col-title{font-family:var(--font-head);font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.wm-col-title.wins{color:var(--green)}.wm-col-title.misses{color:var(--red)}
+.wm-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.wm-card.win-card{border-left:3px solid var(--green)}.wm-card.miss-card{border-left:3px solid var(--red)}
+.wm-matchup{font-family:var(--font-head);font-size:.9rem;font-weight:700;line-height:1.3}
+.wm-round{font-size:.7rem;color:var(--muted);margin-top:2px}
+.wm-conf{font-family:var(--font-head);font-size:1.1rem;font-weight:800;text-align:right;min-width:52px}
+.calib-wrap{margin-bottom:40px}
+.calib-chart{display:flex;align-items:flex-end;gap:16px;height:200px;padding:0 8px;margin-bottom:8px}
+.calib-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.calib-bars{display:flex;gap:4px;align-items:flex-end;width:100%;height:160px}
+.calib-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px}
+.calib-bar.expected{background:var(--border)}.calib-bar.actual{background:var(--accent)}
+.calib-label{font-size:.7rem;color:var(--muted);text-align:center}
+.calib-legend{display:flex;gap:20px;margin-top:12px;font-size:.78rem;color:var(--muted)}
+.legend-dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.champ-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding:20px 24px;background:rgba(240,192,96,.07);border:1px solid var(--accent);border-radius:8px}
+.champ-trophy{font-size:2.5rem}
+.champ-name{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--accent)}
+.champ-meta{font-size:.85rem;color:var(--muted);margin-top:2px}
+.champ-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.champ-game{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px}
+.champ-round{font-family:var(--font-head);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.champ-matchup{font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:8px;line-height:1.3}
+.champ-prob-wrap{display:flex;align-items:center;gap:8px;margin-top:6px}
+.champ-prob-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.champ-prob-fill{height:100%;border-radius:3px}
+.champ-prob-val{font-family:var(--font-head);font-size:.85rem;font-weight:700;min-width:38px;text-align:right}
+.champ-score{font-size:.72rem;color:var(--muted);margin-top:6px}
+.bs-score-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
+.bs-score-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;text-align:center}
+.bs-score-card.primary{border-color:var(--accent);background:rgba(240,192,96,.07)}
+.bs-num{font-family:var(--font-head);font-size:2.6rem;font-weight:800;color:var(--accent);line-height:1}
+.bs-label{font-family:var(--font-head);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.bs-sub{font-size:.72rem;color:var(--muted);margin-top:4px}
+.bs-round-table{width:100%;border-collapse:collapse;font-size:.87rem;margin-bottom:32px}
+.bs-round-table th{font-family:var(--font-head);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border)}
+.bs-round-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.bs-round-table tr:last-child td{border-bottom:none}
+.bs-pts-bar-wrap{width:100%;max-width:180px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:8px}
+.bs-pts-bar{height:100%;border-radius:3px;background:var(--accent)}
+.bs-badge{display:inline-block;font-family:var(--font-head);font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+.bs-badge.correct{background:rgba(74,222,128,.15);color:var(--green)}
+.bs-badge.direct{background:rgba(248,113,113,.15);color:var(--red)}
+.bs-badge.cascade{background:rgba(96,165,250,.12);color:var(--blue)}
+.bs-bench-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:32px}
+.bs-bench-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.bs-bench-row:last-child{margin-bottom:0}
+.bs-bench-label{font-family:var(--font-head);font-size:.8rem;font-weight:700;min-width:130px;color:var(--muted)}
+.bs-bench-score{font-family:var(--font-head);font-size:.85rem;font-weight:700;min-width:48px;text-align:right}
+.bs-bench-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+.bs-bench-fill{height:100%;border-radius:4px}
+.bs-picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-bottom:24px}
+.bs-pick-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px}
+.bs-pick-card.correct{border-left:3px solid var(--green)}
+.bs-pick-card.direct_miss{border-left:3px solid var(--red)}
+.bs-pick-card.cascade_miss{border-left:3px solid var(--blue)}
+.bs-pick-round{font-family:var(--font-head);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.bs-pick-team{font-family:var(--font-head);font-size:.95rem;font-weight:700}
+.bs-pick-team.correct{color:var(--green)}
+.bs-pick-team.wrong{color:var(--red)}
+.bs-pick-team.cascade{color:var(--blue)}
+.bs-pick-detail{font-size:.72rem;color:var(--muted);margin-top:4px}
+.bs-pts-earned{font-family:var(--font-head);font-size:.9rem;font-weight:800;float:right}
+
+.methodology-box strong{color:var(--text)}
+.footer{text-align:center;padding:32px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--border);margin-top:48px}
+.footer a{color:var(--muted)}.footer a:hover{color:var(--accent)}
+@media(max-width:600px){.main{padding:16px}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="site-title">MARCH METHODS</div>
+      <div class="site-subtitle">2025 Results Report &middot; Modeling by <a href="https://www.integanalytics.com" target="_blank">Justin Alger, Integ Analytics</a></div>
+    </div>
+    <div class="header-badge">2025 Holdout Analysis</div>
+  </div>
+</header>
+<nav class="tabs">
+  <div class="tab active" onclick="switchTab('overview',this)">Overview</div>
+  <div class="tab" onclick="switchTab('rounds',this)">Round by Round</div>
+  <div class="tab" onclick="switchTab('winsmisses',this)">Wins &amp; Misses</div>
+  <div class="tab" onclick="switchTab('calibration',this)">Calibration</div>
+  <div class="tab" onclick="switchTab('champion',this)">Champion Story</div>
+  <div class="tab" onclick="switchTab('bracket',this)">Bracket Score</div>
+</nav>
+<main class="main">
+  <section id="tab-overview" class="panel active">
+    <div class="section-title" style="margin-bottom:6px">2025 Tournament &mdash; Model Performance</div>
+    <div class="section-sub">Trained on 2013&ndash;2024 only &middot; 2025 was a true holdout the model never saw during training</div>
+    <div class="hero-grid" id="hero-grid"></div>
+    <div class="section-title" style="margin-bottom:6px">Accuracy by Round</div>
+    <div class="section-sub">How the model performed at each stage of the tournament</div>
+    <div class="round-grid" id="round-grid"></div>
+    <div class="methodology-box">
+      <strong>Methodology:</strong> The model was trained exclusively on 2013&ndash;2024 NCAA Tournament data
+      (693 games, 11 seasons). The 2025 season was held out entirely &mdash; these predictions represent
+      exactly what the model would have said on Selection Sunday 2025, before a single tournament game
+      was played. Features include adjusted offensive/defensive efficiency, shooting percentages,
+      rebounding rates, tempo, turnover rates, seeding, and conference affiliation.
+      No in-tournament or real-time data was used.
+    </div>
+  </section>
+  <section id="tab-rounds" class="panel">
+    <div class="section-title" style="margin-bottom:6px">Round by Round Results</div>
+    <div class="section-sub">Green border = correct &middot; Red border = incorrect &middot; Blue badge = upset game</div>
+    <div id="rounds-render"></div>
+  </section>
+  <section id="tab-winsmisses" class="panel">
+    <div class="section-title" style="margin-bottom:6px">Biggest Wins &amp; Misses</div>
+    <div class="section-sub">Biggest Wins = correct picks with highest confidence &middot; Biggest Misses = wrong picks the model was most confident about</div>
+    <div class="wm-grid" id="wm-grid"></div>
+  </section>
+  <section id="tab-calibration" class="panel">
+    <div class="section-title" style="margin-bottom:6px">Calibration Analysis</div>
+    <div class="section-sub">A well-calibrated model&rsquo;s actual win rate should match its predicted confidence. Gold = actual &middot; Gray = expected</div>
+    <div class="calib-wrap">
+      <div class="calib-chart" id="calib-chart"></div>
+      <div class="calib-legend">
+        <span><span class="legend-dot" style="background:var(--accent)"></span>Actual win rate</span>
+        <span><span class="legend-dot" style="background:var(--border)"></span>Expected (confidence midpoint)</span>
+      </div>
+    </div>
+    <div class="section-title" style="margin-bottom:6px;margin-top:32px">Calibration Data</div>
+    <div class="section-sub">Sample counts and accuracy per bucket</div>
+    <div id="calib-table"></div>
+  </section>
+  <section id="tab-champion" class="panel">
+    <div id="champion-render"></div>
+  </section>
+  <section id="tab-bracket" class="panel">
+    <div class="section-title" style="margin-bottom:4px">Bracket Score Simulation</div>
+    <div class="section-sub">
+      How would this model&rsquo;s deterministic pre-tournament bracket have scored on ESPN Tournament Challenge?
+      Unlike the accuracy analysis (which evaluates each game independently), bracket scoring compounds &mdash;
+      a wrong pick in Round 1 busts every downstream slot that team was projected to reach.
+    </div>
+    <div class="bs-score-hero" id="bs-hero"></div>
+    <div class="section-title" style="margin-bottom:6px">How the Score Compares</div>
+    <div class="section-sub">ESPN Tournament Challenge 2025 national benchmarks (approximate)</div>
+    <div class="bs-bench-wrap" id="bs-bench"></div>
+    <div class="section-title" style="margin-bottom:6px">Points Earned by Round</div>
+    <div class="section-sub">
+      <span style="color:var(--green)">&#9632; Correct</span> &nbsp;
+      <span style="color:var(--red)">&#9632; Direct miss</span> &mdash; model picked wrong team from the two that actually played &nbsp;
+      <span style="color:var(--blue)">&#9632; Cascade miss</span> &mdash; model&rsquo;s pick never made it to this round
+    </div>
+    <table class="bs-round-table" id="bs-round-table"></table>
+    <div class="section-title" style="margin-bottom:6px">Every Pick</div>
+    <div id="bs-round-filter" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"></div>
+    <div class="bs-picks-grid" id="bs-picks-grid"></div>
+    <div class="methodology-box" style="margin-top:16px">
+      <strong>How bracket scoring works:</strong>
+      ESPN awards 10&rarr;20&rarr;40&rarr;80&rarr;160&rarr;320 points per correct pick each round.
+      The maximum possible score is <strong>1,920 points</strong>.
+      A &ldquo;cascade miss&rdquo; means the model&rsquo;s pick for that slot was eliminated in an earlier round,
+      so the slot was already worth zero before the game was played &mdash; this is fundamentally different
+      from the per-game accuracy metric which evaluates every game independently against actual participants.
+      The model&rsquo;s <strong>84.1% per-game accuracy does not translate linearly to bracket score</strong>
+      because errors compound exponentially in single-elimination play.
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  March Methods &middot; Predictive modeling by <a href="https://www.integanalytics.com" target="_blank">Justin Alger, Integ Analytics</a> &middot; Model trained on 2013&ndash;2024 data &middot; 2025 true holdout evaluation
+</footer>
+<script>
+const GAMES=[{"round":"R64","round_label":"First Round","round_num":1,"winner":"Creighton","winner_seed":9,"loser":"Louisville","loser_seed":8,"winner_score":89,"loser_score":75,"prob_winner":0.4723,"predicted_winner":"Louisville","predicted_loser":"Creighton","correct":false,"confidence":0.5277,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Purdue","winner_seed":4,"loser":"High Point","loser_seed":13,"winner_score":75,"loser_score":63,"prob_winner":0.8792,"predicted_winner":"Purdue","predicted_loser":"High Point","correct":true,"confidence":0.8792,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Wisconsin","winner_seed":3,"loser":"Montana","loser_seed":14,"winner_score":85,"loser_score":66,"prob_winner":0.9276,"predicted_winner":"Wisconsin","predicted_loser":"Montana","correct":true,"confidence":0.9276,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Houston","winner_seed":1,"loser":"SIU Edwardsville","loser_seed":16,"winner_score":78,"loser_score":40,"prob_winner":0.9962,"predicted_winner":"Houston","predicted_loser":"SIU Edwardsville","correct":true,"confidence":0.9962,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Auburn","winner_seed":1,"loser":"Alabama State","loser_seed":16,"winner_score":83,"loser_score":63,"prob_winner":0.9967,"predicted_winner":"Auburn","predicted_loser":"Alabama State","correct":true,"confidence":0.9967,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"McNeese","winner_seed":12,"loser":"Clemson","loser_seed":5,"winner_score":69,"loser_score":67,"prob_winner":0.224,"predicted_winner":"Clemson","predicted_loser":"McNeese","correct":false,"confidence":0.776,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"BYU","winner_seed":6,"loser":"VCU","loser_seed":11,"winner_score":80,"loser_score":71,"prob_winner":0.5278,"predicted_winner":"BYU","predicted_loser":"VCU","correct":true,"confidence":0.5278,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Gonzaga","winner_seed":8,"loser":"Georgia","loser_seed":9,"winner_score":89,"loser_score":68,"prob_winner":0.7784,"predicted_winner":"Gonzaga","predicted_loser":"Georgia","correct":true,"confidence":0.7784,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Tennessee","winner_seed":2,"loser":"Wofford","loser_seed":15,"winner_score":77,"loser_score":62,"prob_winner":0.9873,"predicted_winner":"Tennessee","predicted_loser":"Wofford","correct":true,"confidence":0.9873,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Arkansas","winner_seed":10,"loser":"Kansas","loser_seed":7,"winner_score":79,"loser_score":72,"prob_winner":0.3585,"predicted_winner":"Kansas","predicted_loser":"Arkansas","correct":false,"confidence":0.6415,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Texas A&M","winner_seed":4,"loser":"Yale","loser_seed":13,"winner_score":80,"loser_score":71,"prob_winner":0.8423,"predicted_winner":"Texas A&M","predicted_loser":"Yale","correct":true,"confidence":0.8423,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Drake","winner_seed":11,"loser":"Missouri","loser_seed":6,"winner_score":67,"loser_score":57,"prob_winner":0.1691,"predicted_winner":"Missouri","predicted_loser":"Drake","correct":false,"confidence":0.8309,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"UCLA","winner_seed":7,"loser":"Utah State","loser_seed":10,"winner_score":72,"loser_score":47,"prob_winner":0.8076,"predicted_winner":"UCLA","predicted_loser":"Utah State","correct":true,"confidence":0.8076,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"St. John's","winner_seed":2,"loser":"Omaha","loser_seed":15,"winner_score":83,"loser_score":53,"prob_winner":0.9409,"predicted_winner":"St. John's","predicted_loser":"Omaha","correct":true,"confidence":0.9409,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Michigan","winner_seed":5,"loser":"UC San Diego","loser_seed":12,"winner_score":68,"loser_score":65,"prob_winner":0.7095,"predicted_winner":"Michigan","predicted_loser":"UC San Diego","correct":true,"confidence":0.7095,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Texas Tech","winner_seed":3,"loser":"UNC Wilmington","loser_seed":14,"winner_score":82,"loser_score":72,"prob_winner":0.9545,"predicted_winner":"Texas Tech","predicted_loser":"UNC Wilmington","correct":true,"confidence":0.9545,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Baylor","winner_seed":9,"loser":"Mississippi State","loser_seed":8,"winner_score":75,"loser_score":72,"prob_winner":0.6234,"predicted_winner":"Baylor","predicted_loser":"Mississippi State","correct":true,"confidence":0.6234,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Alabama","winner_seed":2,"loser":"Robert Morris","loser_seed":15,"winner_score":90,"loser_score":81,"prob_winner":0.984,"predicted_winner":"Alabama","predicted_loser":"Robert Morris","correct":true,"confidence":0.984,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Iowa State","winner_seed":3,"loser":"Lipscomb","loser_seed":14,"winner_score":82,"loser_score":55,"prob_winner":0.8785,"predicted_winner":"Iowa State","predicted_loser":"Lipscomb","correct":true,"confidence":0.8785,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Colorado State","winner_seed":12,"loser":"Memphis","loser_seed":5,"winner_score":78,"loser_score":70,"prob_winner":0.5935,"predicted_winner":"Colorado State","predicted_loser":"Memphis","correct":true,"confidence":0.5935,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Duke","winner_seed":1,"loser":"Mount St. Mary's","loser_seed":16,"winner_score":93,"loser_score":49,"prob_winner":0.9971,"predicted_winner":"Duke","predicted_loser":"Mount St. Mary's","correct":true,"confidence":0.9971,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Saint Mary's","winner_seed":7,"loser":"Vanderbilt","loser_seed":10,"winner_score":59,"loser_score":56,"prob_winner":0.5867,"predicted_winner":"Saint Mary's","predicted_loser":"Vanderbilt","correct":true,"confidence":0.5867,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Ole Miss","winner_seed":6,"loser":"North Carolina","loser_seed":11,"winner_score":71,"loser_score":64,"prob_winner":0.5385,"predicted_winner":"Ole Miss","predicted_loser":"North Carolina","correct":true,"confidence":0.5385,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Maryland","winner_seed":4,"loser":"Grand Canyon","loser_seed":13,"winner_score":81,"loser_score":49,"prob_winner":0.947,"predicted_winner":"Maryland","predicted_loser":"Grand Canyon","correct":true,"confidence":0.947,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Florida","winner_seed":1,"loser":"Norfolk State","loser_seed":16,"winner_score":95,"loser_score":69,"prob_winner":0.9854,"predicted_winner":"Florida","predicted_loser":"Norfolk State","correct":true,"confidence":0.9854,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Kentucky","winner_seed":3,"loser":"Troy","loser_seed":14,"winner_score":76,"loser_score":57,"prob_winner":0.9226,"predicted_winner":"Kentucky","predicted_loser":"Troy","correct":true,"confidence":0.9226,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"New Mexico","winner_seed":10,"loser":"Marquette","loser_seed":7,"winner_score":75,"loser_score":66,"prob_winner":0.1751,"predicted_winner":"Marquette","predicted_loser":"New Mexico","correct":false,"confidence":0.8249,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Arizona","winner_seed":4,"loser":"Akron","loser_seed":13,"winner_score":93,"loser_score":65,"prob_winner":0.8928,"predicted_winner":"Arizona","predicted_loser":"Akron","correct":true,"confidence":0.8928,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"UConn","winner_seed":8,"loser":"Oklahoma","loser_seed":9,"winner_score":67,"loser_score":59,"prob_winner":0.346,"predicted_winner":"Oklahoma","predicted_loser":"UConn","correct":false,"confidence":0.654,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Illinois","winner_seed":6,"loser":"Xavier","loser_seed":11,"winner_score":86,"loser_score":73,"prob_winner":0.572,"predicted_winner":"Illinois","predicted_loser":"Xavier","correct":true,"confidence":0.572,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Michigan State","winner_seed":2,"loser":"Bryant","loser_seed":15,"winner_score":87,"loser_score":62,"prob_winner":0.9567,"predicted_winner":"Michigan State","predicted_loser":"Bryant","correct":true,"confidence":0.9567,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Oregon","winner_seed":5,"loser":"Liberty","loser_seed":12,"winner_score":81,"loser_score":52,"prob_winner":0.6604,"predicted_winner":"Oregon","predicted_loser":"Liberty","correct":true,"confidence":0.6604,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Purdue","winner_seed":4,"loser":"McNeese","loser_seed":12,"winner_score":76,"loser_score":62,"prob_winner":0.8341,"predicted_winner":"Purdue","predicted_loser":"McNeese","correct":true,"confidence":0.8341,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Arkansas","winner_seed":10,"loser":"St. John's","loser_seed":2,"winner_score":75,"loser_score":66,"prob_winner":0.4466,"predicted_winner":"St. John's","predicted_loser":"Arkansas","correct":false,"confidence":0.5534,"is_upset":true},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Michigan","winner_seed":5,"loser":"Texas A&M","loser_seed":4,"winner_score":91,"loser_score":79,"prob_winner":0.4938,"predicted_winner":"Texas A&M","predicted_loser":"Michigan","correct":false,"confidence":0.5062,"is_upset":true},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Texas Tech","winner_seed":3,"loser":"Drake","loser_seed":11,"winner_score":77,"loser_score":64,"prob_winner":0.8525,"predicted_winner":"Texas Tech","predicted_loser":"Drake","correct":true,"confidence":0.8525,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Auburn","winner_seed":1,"loser":"Creighton","loser_seed":9,"winner_score":82,"loser_score":70,"prob_winner":0.904,"predicted_winner":"Auburn","predicted_loser":"Creighton","correct":true,"confidence":0.904,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"BYU","winner_seed":6,"loser":"Wisconsin","loser_seed":3,"winner_score":91,"loser_score":89,"prob_winner":0.3038,"predicted_winner":"Wisconsin","predicted_loser":"BYU","correct":false,"confidence":0.6962,"is_upset":true},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Houston","winner_seed":1,"loser":"Gonzaga","loser_seed":8,"winner_score":81,"loser_score":76,"prob_winner":0.7113,"predicted_winner":"Houston","predicted_loser":"Gonzaga","correct":true,"confidence":0.7113,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Tennessee","winner_seed":2,"loser":"UCLA","loser_seed":7,"winner_score":67,"loser_score":58,"prob_winner":0.776,"predicted_winner":"Tennessee","predicted_loser":"UCLA","correct":true,"confidence":0.776,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Florida","winner_seed":1,"loser":"UConn","loser_seed":8,"winner_score":77,"loser_score":75,"prob_winner":0.8904,"predicted_winner":"Florida","predicted_loser":"UConn","correct":true,"confidence":0.8904,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Duke","winner_seed":1,"loser":"Baylor","loser_seed":9,"winner_score":89,"loser_score":66,"prob_winner":0.8792,"predicted_winner":"Duke","predicted_loser":"Baylor","correct":true,"confidence":0.8792,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Kentucky","winner_seed":3,"loser":"Illinois","loser_seed":6,"winner_score":84,"loser_score":75,"prob_winner":0.6429,"predicted_winner":"Kentucky","predicted_loser":"Illinois","correct":true,"confidence":0.6429,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Alabama","winner_seed":2,"loser":"Saint Mary's","loser_seed":7,"winner_score":80,"loser_score":66,"prob_winner":0.7997,"predicted_winner":"Alabama","predicted_loser":"Saint Mary's","correct":true,"confidence":0.7997,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Maryland","winner_seed":4,"loser":"Colorado State","loser_seed":12,"winner_score":72,"loser_score":71,"prob_winner":0.857,"predicted_winner":"Maryland","predicted_loser":"Colorado State","correct":true,"confidence":0.857,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Ole Miss","winner_seed":6,"loser":"Iowa State","loser_seed":3,"winner_score":91,"loser_score":78,"prob_winner":0.5289,"predicted_winner":"Ole Miss","predicted_loser":"Iowa State","correct":true,"confidence":0.5289,"is_upset":true},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Michigan State","winner_seed":2,"loser":"New Mexico","loser_seed":10,"winner_score":71,"loser_score":63,"prob_winner":0.8811,"predicted_winner":"Michigan State","predicted_loser":"New Mexico","correct":true,"confidence":0.8811,"is_upset":false},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"Arizona","winner_seed":4,"loser":"Oregon","loser_seed":5,"winner_score":87,"loser_score":83,"prob_winner":0.5607,"predicted_winner":"Arizona","predicted_loser":"Oregon","correct":true,"confidence":0.5607,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Alabama","winner_seed":2,"loser":"BYU","loser_seed":6,"winner_score":113,"loser_score":88,"prob_winner":0.8484,"predicted_winner":"Alabama","predicted_loser":"BYU","correct":true,"confidence":0.8484,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Florida","winner_seed":1,"loser":"Maryland","loser_seed":4,"winner_score":87,"loser_score":71,"prob_winner":0.671,"predicted_winner":"Florida","predicted_loser":"Maryland","correct":true,"confidence":0.671,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Duke","winner_seed":1,"loser":"Arizona","loser_seed":4,"winner_score":100,"loser_score":93,"prob_winner":0.8237,"predicted_winner":"Duke","predicted_loser":"Arizona","correct":true,"confidence":0.8237,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Texas Tech","winner_seed":3,"loser":"Arkansas","loser_seed":10,"winner_score":85,"loser_score":83,"prob_winner":0.728,"predicted_winner":"Texas Tech","predicted_loser":"Arkansas","correct":true,"confidence":0.728,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Michigan State","winner_seed":2,"loser":"Ole Miss","loser_seed":6,"winner_score":73,"loser_score":70,"prob_winner":0.5158,"predicted_winner":"Michigan State","predicted_loser":"Ole Miss","correct":true,"confidence":0.5158,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Tennessee","winner_seed":2,"loser":"Kentucky","loser_seed":3,"winner_score":78,"loser_score":65,"prob_winner":0.75,"predicted_winner":"Tennessee","predicted_loser":"Kentucky","correct":true,"confidence":0.75,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Auburn","winner_seed":1,"loser":"Michigan","loser_seed":5,"winner_score":78,"loser_score":65,"prob_winner":0.8737,"predicted_winner":"Auburn","predicted_loser":"Michigan","correct":true,"confidence":0.8737,"is_upset":false},{"round":"S16","round_label":"Sweet 16","round_num":3,"winner":"Houston","winner_seed":1,"loser":"Purdue","loser_seed":4,"winner_score":62,"loser_score":60,"prob_winner":0.7935,"predicted_winner":"Houston","predicted_loser":"Purdue","correct":true,"confidence":0.7935,"is_upset":false},{"round":"E8","round_label":"Elite Eight","round_num":4,"winner":"Florida","winner_seed":1,"loser":"Texas Tech","loser_seed":3,"winner_score":84,"loser_score":79,"prob_winner":0.6672,"predicted_winner":"Florida","predicted_loser":"Texas Tech","correct":true,"confidence":0.6672,"is_upset":false},{"round":"E8","round_label":"Elite Eight","round_num":4,"winner":"Duke","winner_seed":1,"loser":"Alabama","loser_seed":2,"winner_score":85,"loser_score":65,"prob_winner":0.6258,"predicted_winner":"Duke","predicted_loser":"Alabama","correct":true,"confidence":0.6258,"is_upset":false},{"round":"E8","round_label":"Elite Eight","round_num":4,"winner":"Houston","winner_seed":1,"loser":"Tennessee","loser_seed":2,"winner_score":69,"loser_score":50,"prob_winner":0.6574,"predicted_winner":"Houston","predicted_loser":"Tennessee","correct":true,"confidence":0.6574,"is_upset":false},{"round":"E8","round_label":"Elite Eight","round_num":4,"winner":"Auburn","winner_seed":1,"loser":"Michigan State","loser_seed":2,"winner_score":70,"loser_score":64,"prob_winner":0.8308,"predicted_winner":"Auburn","predicted_loser":"Michigan State","correct":true,"confidence":0.8308,"is_upset":false},{"round":"F4","round_label":"Final Four","round_num":5,"winner":"Florida","winner_seed":1,"loser":"Auburn","loser_seed":1,"winner_score":79,"loser_score":73,"prob_winner":0.3863,"predicted_winner":"Auburn","predicted_loser":"Florida","correct":false,"confidence":0.6137,"is_upset":false},{"round":"F4","round_label":"Final Four","round_num":5,"winner":"Houston","winner_seed":1,"loser":"Duke","loser_seed":1,"winner_score":70,"loser_score":67,"prob_winner":0.5587,"predicted_winner":"Houston","predicted_loser":"Duke","correct":true,"confidence":0.5587,"is_upset":false},{"round":"Championship","round_label":"Championship","round_num":6,"winner":"Florida","winner_seed":1,"loser":"Houston","loser_seed":1,"winner_score":65,"loser_score":63,"prob_winner":0.3623,"predicted_winner":"Houston","predicted_loser":"Florida","correct":false,"confidence":0.6377,"is_upset":false}];
+const STATS={"total":63,"correct":52,"accuracy":0.8254,"by_round":{"R64":{"label":"First Round","correct":26,"total":32,"accuracy":0.8125},"R32":{"label":"Second Round","correct":13,"total":16,"accuracy":0.8125},"S16":{"label":"Sweet 16","correct":8,"total":8,"accuracy":1.0},"E8":{"label":"Elite Eight","correct":4,"total":4,"accuracy":1.0},"F4":{"label":"Final Four","correct":1,"total":2,"accuracy":0.5},"Championship":{"label":"Championship","correct":0,"total":1,"accuracy":0.0}},"by_group":{"First Weekend":{"correct":39,"total":48,"accuracy":0.8125},"Second Weekend":{"correct":12,"total":12,"accuracy":1.0},"Final Four & Championship":{"correct":1,"total":3,"accuracy":0.3333}},"calibration":[{"label":"50-60%","expected":0.55,"actual":0.75,"count":12},{"label":"60-70%","expected":0.65,"actual":0.5833,"count":12},{"label":"70-80%","expected":0.75,"actual":0.8889,"count":9},{"label":"80-90%","expected":0.85,"actual":0.8824,"count":17},{"label":"90-100%","expected":0.95,"actual":1.0,"count":13}],"upset_games":11,"upsets_called":3,"biggest_wins":[{"round":"R64","round_label":"First Round","round_num":1,"winner":"Duke","winner_seed":1,"loser":"Mount St. Mary's","loser_seed":16,"winner_score":93,"loser_score":49,"prob_winner":0.9971,"predicted_winner":"Duke","predicted_loser":"Mount St. Mary's","correct":true,"confidence":0.9971,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Auburn","winner_seed":1,"loser":"Alabama State","loser_seed":16,"winner_score":83,"loser_score":63,"prob_winner":0.9967,"predicted_winner":"Auburn","predicted_loser":"Alabama State","correct":true,"confidence":0.9967,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Houston","winner_seed":1,"loser":"SIU Edwardsville","loser_seed":16,"winner_score":78,"loser_score":40,"prob_winner":0.9962,"predicted_winner":"Houston","predicted_loser":"SIU Edwardsville","correct":true,"confidence":0.9962,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Tennessee","winner_seed":2,"loser":"Wofford","loser_seed":15,"winner_score":77,"loser_score":62,"prob_winner":0.9873,"predicted_winner":"Tennessee","predicted_loser":"Wofford","correct":true,"confidence":0.9873,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Florida","winner_seed":1,"loser":"Norfolk State","loser_seed":16,"winner_score":95,"loser_score":69,"prob_winner":0.9854,"predicted_winner":"Florida","predicted_loser":"Norfolk State","correct":true,"confidence":0.9854,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Alabama","winner_seed":2,"loser":"Robert Morris","loser_seed":15,"winner_score":90,"loser_score":81,"prob_winner":0.984,"predicted_winner":"Alabama","predicted_loser":"Robert Morris","correct":true,"confidence":0.984,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Michigan State","winner_seed":2,"loser":"Bryant","loser_seed":15,"winner_score":87,"loser_score":62,"prob_winner":0.9567,"predicted_winner":"Michigan State","predicted_loser":"Bryant","correct":true,"confidence":0.9567,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Texas Tech","winner_seed":3,"loser":"UNC Wilmington","loser_seed":14,"winner_score":82,"loser_score":72,"prob_winner":0.9545,"predicted_winner":"Texas Tech","predicted_loser":"UNC Wilmington","correct":true,"confidence":0.9545,"is_upset":false}],"biggest_misses":[{"round":"R64","round_label":"First Round","round_num":1,"winner":"Drake","winner_seed":11,"loser":"Missouri","loser_seed":6,"winner_score":67,"loser_score":57,"prob_winner":0.1691,"predicted_winner":"Missouri","predicted_loser":"Drake","correct":false,"confidence":0.8309,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"New Mexico","winner_seed":10,"loser":"Marquette","loser_seed":7,"winner_score":75,"loser_score":66,"prob_winner":0.1751,"predicted_winner":"Marquette","predicted_loser":"New Mexico","correct":false,"confidence":0.8249,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"McNeese","winner_seed":12,"loser":"Clemson","loser_seed":5,"winner_score":69,"loser_score":67,"prob_winner":0.224,"predicted_winner":"Clemson","predicted_loser":"McNeese","correct":false,"confidence":0.776,"is_upset":true},{"round":"R32","round_label":"Second Round","round_num":2,"winner":"BYU","winner_seed":6,"loser":"Wisconsin","loser_seed":3,"winner_score":91,"loser_score":89,"prob_winner":0.3038,"predicted_winner":"Wisconsin","predicted_loser":"BYU","correct":false,"confidence":0.6962,"is_upset":true},{"round":"R64","round_label":"First Round","round_num":1,"winner":"UConn","winner_seed":8,"loser":"Oklahoma","loser_seed":9,"winner_score":67,"loser_score":59,"prob_winner":0.346,"predicted_winner":"Oklahoma","predicted_loser":"UConn","correct":false,"confidence":0.654,"is_upset":false},{"round":"R64","round_label":"First Round","round_num":1,"winner":"Arkansas","winner_seed":10,"loser":"Kansas","loser_seed":7,"winner_score":79,"loser_score":72,"prob_winner":0.3585,"predicted_winner":"Kansas","predicted_loser":"Arkansas","correct":false,"confidence":0.6415,"is_upset":true},{"round":"Championship","round_label":"Championship","round_num":6,"winner":"Florida","winner_seed":1,"loser":"Houston","loser_seed":1,"winner_score":65,"loser_score":63,"prob_winner":0.3623,"predicted_winner":"Houston","predicted_loser":"Florida","correct":false,"confidence":0.6377,"is_upset":false},{"round":"F4","round_label":"Final Four","round_num":5,"winner":"Florida","winner_seed":1,"loser":"Auburn","loser_seed":1,"winner_score":79,"loser_score":73,"prob_winner":0.3863,"predicted_winner":"Auburn","predicted_loser":"Florida","correct":false,"confidence":0.6137,"is_upset":false}]};
+const CHAMP={"champion":"Florida","games":[{"round":"R64","round_label":"First Round","champ_seed":1,"opponent":"Norfolk State","opp_seed":16,"prob_champ":0.9854,"score":"95\u201369"},{"round":"R32","round_label":"Second Round","champ_seed":1,"opponent":"UConn","opp_seed":8,"prob_champ":0.8904,"score":"77\u201375"},{"round":"S16","round_label":"Sweet 16","champ_seed":1,"opponent":"Maryland","opp_seed":4,"prob_champ":0.671,"score":"87\u201371"},{"round":"E8","round_label":"Elite Eight","champ_seed":1,"opponent":"Texas Tech","opp_seed":3,"prob_champ":0.6672,"score":"84\u201379"},{"round":"F4","round_label":"Final Four","champ_seed":1,"opponent":"Auburn","opp_seed":1,"prob_champ":0.3863,"score":"79\u201373"},{"round":"Championship","round_label":"Championship","champ_seed":1,"opponent":"Houston","opp_seed":1,"prob_champ":0.3623,"score":"65\u201363"}],"avg_prob":0.6604};
+const BSIM={"picks":[{"round":"R64","region":"West","pick":"Florida","pick_seed":1,"pred_opp":"Norfolk State","pred_opp_seed":16,"actual_opp":"Norfolk State","actual_opp_seed":16,"confidence":0.9854,"actual_winner":"Florida","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"West","pick":"St. John's","pick_seed":2,"pred_opp":"Omaha","pred_opp_seed":15,"actual_opp":"Omaha","actual_opp_seed":15,"confidence":0.9409,"actual_winner":"St. John's","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"West","pick":"Texas Tech","pick_seed":3,"pred_opp":"UNC Wilmington","pred_opp_seed":14,"actual_opp":"UNC Wilmington","actual_opp_seed":14,"confidence":0.9545,"actual_winner":"Texas Tech","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"West","pick":"Maryland","pick_seed":4,"pred_opp":"Grand Canyon","pred_opp_seed":13,"actual_opp":"Grand Canyon","actual_opp_seed":13,"confidence":0.947,"actual_winner":"Maryland","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"West","pick":"Colorado State","pick_seed":12,"pred_opp":"Memphis","pred_opp_seed":5,"actual_opp":"Memphis","actual_opp_seed":5,"confidence":0.5935,"actual_winner":"Colorado State","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"West","pick":"Missouri","pick_seed":6,"pred_opp":"Drake","pred_opp_seed":11,"actual_opp":"Drake","actual_opp_seed":11,"confidence":0.8309,"actual_winner":"Drake","status":"direct_miss","earned":false,"points_possible":10,"points_earned":0},{"round":"R64","region":"West","pick":"Kansas","pick_seed":7,"pred_opp":"Arkansas","pred_opp_seed":10,"actual_opp":"Arkansas","actual_opp_seed":10,"confidence":0.6415,"actual_winner":"Arkansas","status":"direct_miss","earned":false,"points_possible":10,"points_earned":0},{"round":"R64","region":"West","pick":"Oklahoma","pick_seed":9,"pred_opp":"UConn","pred_opp_seed":8,"actual_opp":"UConn","actual_opp_seed":8,"confidence":0.654,"actual_winner":"UConn","status":"direct_miss","earned":false,"points_possible":10,"points_earned":0},{"round":"R32","region":"West","pick":"Florida","pick_seed":1,"pred_opp":"Oklahoma","pred_opp_seed":9,"actual_opp":"UConn","actual_opp_seed":8,"confidence":null,"actual_winner":"Florida","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"West","pick":"Maryland","pick_seed":4,"pred_opp":"Colorado State","pred_opp_seed":12,"actual_opp":"Colorado State","actual_opp_seed":12,"confidence":0.857,"actual_winner":"Maryland","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"West","pick":"Texas Tech","pick_seed":3,"pred_opp":"Missouri","pred_opp_seed":6,"actual_opp":"Drake","actual_opp_seed":11,"confidence":null,"actual_winner":"Texas Tech","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"West","pick":"Kansas","pick_seed":7,"pred_opp":"St. John's","pred_opp_seed":2,"actual_opp":"St. John's","actual_opp_seed":2,"confidence":0.5908,"actual_winner":"Arkansas","status":"cascade_miss","earned":false,"points_possible":20,"points_earned":0},{"round":"S16","region":"West","pick":"Florida","pick_seed":1,"pred_opp":"Maryland","pred_opp_seed":4,"actual_opp":"Maryland","actual_opp_seed":4,"confidence":0.671,"actual_winner":"Florida","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"S16","region":"West","pick":"Texas Tech","pick_seed":3,"pred_opp":"Kansas","pred_opp_seed":7,"actual_opp":"Arkansas","actual_opp_seed":10,"confidence":null,"actual_winner":"Texas Tech","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"E8","region":"West","pick":"Florida","pick_seed":1,"pred_opp":"Texas Tech","pred_opp_seed":3,"actual_opp":"Texas Tech","actual_opp_seed":3,"confidence":0.6672,"actual_winner":"Florida","status":"correct","earned":true,"points_possible":80,"points_earned":80},{"round":"R64","region":"East","pick":"Duke","pick_seed":1,"pred_opp":"Mount St. Mary's","pred_opp_seed":16,"actual_opp":"Mount St. Mary's","actual_opp_seed":16,"confidence":0.9971,"actual_winner":"Duke","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"Alabama","pick_seed":2,"pred_opp":"Robert Morris","pred_opp_seed":15,"actual_opp":"Robert Morris","actual_opp_seed":15,"confidence":0.984,"actual_winner":"Alabama","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"Wisconsin","pick_seed":3,"pred_opp":"Montana","pred_opp_seed":14,"actual_opp":"Montana","actual_opp_seed":14,"confidence":0.9276,"actual_winner":"Wisconsin","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"Arizona","pick_seed":4,"pred_opp":"Akron","pred_opp_seed":13,"actual_opp":"Akron","actual_opp_seed":13,"confidence":0.8928,"actual_winner":"Arizona","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"Oregon","pick_seed":5,"pred_opp":"Liberty","pred_opp_seed":12,"actual_opp":"Liberty","actual_opp_seed":12,"confidence":0.6604,"actual_winner":"Oregon","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"BYU","pick_seed":6,"pred_opp":"VCU","pred_opp_seed":11,"actual_opp":"VCU","actual_opp_seed":11,"confidence":0.5278,"actual_winner":"BYU","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"Saint Mary's","pick_seed":7,"pred_opp":"Vanderbilt","pred_opp_seed":10,"actual_opp":"Vanderbilt","actual_opp_seed":10,"confidence":0.5867,"actual_winner":"Saint Mary's","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"East","pick":"Baylor","pick_seed":9,"pred_opp":"Mississippi State","pred_opp_seed":8,"actual_opp":"Mississippi State","actual_opp_seed":8,"confidence":0.6234,"actual_winner":"Baylor","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R32","region":"East","pick":"Duke","pick_seed":1,"pred_opp":"Baylor","pred_opp_seed":9,"actual_opp":"Baylor","actual_opp_seed":9,"confidence":0.8792,"actual_winner":"Duke","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"East","pick":"Arizona","pick_seed":4,"pred_opp":"Oregon","pred_opp_seed":5,"actual_opp":"Oregon","actual_opp_seed":5,"confidence":0.5607,"actual_winner":"Arizona","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"East","pick":"Wisconsin","pick_seed":3,"pred_opp":"BYU","pred_opp_seed":6,"actual_opp":"BYU","actual_opp_seed":6,"confidence":0.6962,"actual_winner":"BYU","status":"direct_miss","earned":false,"points_possible":20,"points_earned":0},{"round":"R32","region":"East","pick":"Alabama","pick_seed":2,"pred_opp":"Saint Mary's","pred_opp_seed":7,"actual_opp":"Saint Mary's","actual_opp_seed":7,"confidence":0.7997,"actual_winner":"Alabama","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"S16","region":"East","pick":"Duke","pick_seed":1,"pred_opp":"Arizona","pred_opp_seed":4,"actual_opp":"Arizona","actual_opp_seed":4,"confidence":0.8237,"actual_winner":"Duke","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"S16","region":"East","pick":"Alabama","pick_seed":2,"pred_opp":"Wisconsin","pred_opp_seed":3,"actual_opp":"BYU","actual_opp_seed":6,"confidence":null,"actual_winner":"Alabama","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"E8","region":"East","pick":"Duke","pick_seed":1,"pred_opp":"Alabama","pred_opp_seed":2,"actual_opp":"Alabama","actual_opp_seed":2,"confidence":0.6258,"actual_winner":"Duke","status":"correct","earned":true,"points_possible":80,"points_earned":80},{"round":"R64","region":"Midwest","pick":"Houston","pick_seed":1,"pred_opp":"SIU Edwardsville","pred_opp_seed":16,"actual_opp":"SIU Edwardsville","actual_opp_seed":16,"confidence":0.9962,"actual_winner":"Houston","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"Midwest","pick":"Tennessee","pick_seed":2,"pred_opp":"Wofford","pred_opp_seed":15,"actual_opp":"Wofford","actual_opp_seed":15,"confidence":0.9873,"actual_winner":"Tennessee","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"Midwest","pick":"Kentucky","pick_seed":3,"pred_opp":"Troy","pred_opp_seed":14,"actual_opp":"Troy","actual_opp_seed":14,"confidence":0.9226,"actual_winner":"Kentucky","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"Midwest","pick":"Purdue","pick_seed":4,"pred_opp":"High Point","pred_opp_seed":13,"actual_opp":"High Point","actual_opp_seed":13,"confidence":0.8792,"actual_winner":"Purdue","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"Midwest","pick":"Clemson","pick_seed":5,"pred_opp":"McNeese","pred_opp_seed":12,"actual_opp":"McNeese","actual_opp_seed":12,"confidence":0.776,"actual_winner":"McNeese","status":"direct_miss","earned":false,"points_possible":10,"points_earned":0},{"round":"R64","region":"Midwest","pick":"Illinois","pick_seed":6,"pred_opp":"Xavier","pred_opp_seed":11,"actual_opp":"Xavier","actual_opp_seed":11,"confidence":0.572,"actual_winner":"Illinois","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"Midwest","pick":"UCLA","pick_seed":7,"pred_opp":"Utah State","pred_opp_seed":10,"actual_opp":"Utah State","actual_opp_seed":10,"confidence":0.8076,"actual_winner":"UCLA","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"Midwest","pick":"Gonzaga","pick_seed":8,"pred_opp":"Georgia","pred_opp_seed":9,"actual_opp":"Georgia","actual_opp_seed":9,"confidence":0.7784,"actual_winner":"Gonzaga","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R32","region":"Midwest","pick":"Houston","pick_seed":1,"pred_opp":"Gonzaga","pred_opp_seed":8,"actual_opp":"Gonzaga","actual_opp_seed":8,"confidence":0.7113,"actual_winner":"Houston","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"Midwest","pick":"Purdue","pick_seed":4,"pred_opp":"Clemson","pred_opp_seed":5,"actual_opp":"McNeese","actual_opp_seed":12,"confidence":null,"actual_winner":"Purdue","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"Midwest","pick":"Kentucky","pick_seed":3,"pred_opp":"Illinois","pred_opp_seed":6,"actual_opp":"Illinois","actual_opp_seed":6,"confidence":0.6429,"actual_winner":"Kentucky","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"Midwest","pick":"Tennessee","pick_seed":2,"pred_opp":"UCLA","pred_opp_seed":7,"actual_opp":"UCLA","actual_opp_seed":7,"confidence":0.776,"actual_winner":"Tennessee","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"S16","region":"Midwest","pick":"Houston","pick_seed":1,"pred_opp":"Purdue","pred_opp_seed":4,"actual_opp":"Purdue","actual_opp_seed":4,"confidence":0.7935,"actual_winner":"Houston","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"S16","region":"Midwest","pick":"Tennessee","pick_seed":2,"pred_opp":"Kentucky","pred_opp_seed":3,"actual_opp":"Kentucky","actual_opp_seed":3,"confidence":0.75,"actual_winner":"Tennessee","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"E8","region":"Midwest","pick":"Houston","pick_seed":1,"pred_opp":"Tennessee","pred_opp_seed":2,"actual_opp":"Tennessee","actual_opp_seed":2,"confidence":0.6574,"actual_winner":"Houston","status":"correct","earned":true,"points_possible":80,"points_earned":80},{"round":"R64","region":"South","pick":"Auburn","pick_seed":1,"pred_opp":"Alabama State","pred_opp_seed":16,"actual_opp":"Alabama State","actual_opp_seed":16,"confidence":0.9967,"actual_winner":"Auburn","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"South","pick":"Michigan State","pick_seed":2,"pred_opp":"Bryant","pred_opp_seed":15,"actual_opp":"Bryant","actual_opp_seed":15,"confidence":0.9567,"actual_winner":"Michigan State","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"South","pick":"Iowa State","pick_seed":3,"pred_opp":"Lipscomb","pred_opp_seed":14,"actual_opp":"Lipscomb","actual_opp_seed":14,"confidence":0.8785,"actual_winner":"Iowa State","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"South","pick":"Texas A&M","pick_seed":4,"pred_opp":"Yale","pred_opp_seed":13,"actual_opp":"Yale","actual_opp_seed":13,"confidence":0.8423,"actual_winner":"Texas A&M","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"South","pick":"Michigan","pick_seed":5,"pred_opp":"UC San Diego","pred_opp_seed":12,"actual_opp":"UC San Diego","actual_opp_seed":12,"confidence":0.7095,"actual_winner":"Michigan","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"South","pick":"Ole Miss","pick_seed":6,"pred_opp":"North Carolina","pred_opp_seed":11,"actual_opp":"North Carolina","actual_opp_seed":11,"confidence":0.5385,"actual_winner":"Ole Miss","status":"correct","earned":true,"points_possible":10,"points_earned":10},{"round":"R64","region":"South","pick":"Marquette","pick_seed":7,"pred_opp":"New Mexico","pred_opp_seed":10,"actual_opp":"New Mexico","actual_opp_seed":10,"confidence":0.8249,"actual_winner":"New Mexico","status":"direct_miss","earned":false,"points_possible":10,"points_earned":0},{"round":"R64","region":"South","pick":"Louisville","pick_seed":8,"pred_opp":"Creighton","pred_opp_seed":9,"actual_opp":"Creighton","actual_opp_seed":9,"confidence":0.5277,"actual_winner":"Creighton","status":"direct_miss","earned":false,"points_possible":10,"points_earned":0},{"round":"R32","region":"South","pick":"Auburn","pick_seed":1,"pred_opp":"Louisville","pred_opp_seed":8,"actual_opp":"Creighton","actual_opp_seed":9,"confidence":null,"actual_winner":"Auburn","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"South","pick":"Texas A&M","pick_seed":4,"pred_opp":"Michigan","pred_opp_seed":5,"actual_opp":"Michigan","actual_opp_seed":5,"confidence":0.5062,"actual_winner":"Michigan","status":"direct_miss","earned":false,"points_possible":20,"points_earned":0},{"round":"R32","region":"South","pick":"Ole Miss","pick_seed":6,"pred_opp":"Iowa State","pred_opp_seed":3,"actual_opp":"Iowa State","actual_opp_seed":3,"confidence":0.5289,"actual_winner":"Ole Miss","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"R32","region":"South","pick":"Michigan State","pick_seed":2,"pred_opp":"Marquette","pred_opp_seed":7,"actual_opp":"New Mexico","actual_opp_seed":10,"confidence":null,"actual_winner":"Michigan State","status":"correct","earned":true,"points_possible":20,"points_earned":20},{"round":"S16","region":"South","pick":"Auburn","pick_seed":1,"pred_opp":"Texas A&M","pred_opp_seed":4,"actual_opp":"Michigan","actual_opp_seed":5,"confidence":null,"actual_winner":"Auburn","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"S16","region":"South","pick":"Michigan State","pick_seed":2,"pred_opp":"Ole Miss","pred_opp_seed":6,"actual_opp":"Ole Miss","actual_opp_seed":6,"confidence":0.5158,"actual_winner":"Michigan State","status":"correct","earned":true,"points_possible":40,"points_earned":40},{"round":"E8","region":"South","pick":"Auburn","pick_seed":1,"pred_opp":"Michigan State","pred_opp_seed":2,"actual_opp":"Michigan State","actual_opp_seed":2,"confidence":0.8308,"actual_winner":"Auburn","status":"correct","earned":true,"points_possible":80,"points_earned":80},{"round":"F4","region":"South/West","pick":"Auburn","pick_seed":1,"pred_opp":"Florida","pred_opp_seed":1,"actual_opp":"Florida","actual_opp_seed":1,"confidence":0.6137,"actual_winner":"Florida","status":"direct_miss","earned":false,"points_possible":160,"points_earned":0},{"round":"F4","region":"Midwest/East","pick":"Houston","pick_seed":1,"pred_opp":"Duke","pred_opp_seed":1,"actual_opp":"Duke","actual_opp_seed":1,"confidence":0.5587,"actual_winner":"Houston","status":"correct","earned":true,"points_possible":160,"points_earned":160},{"round":"Championship","region":"Final","pick":"Houston","pick_seed":1,"pred_opp":"Auburn","pred_opp_seed":1,"actual_opp":"Florida","actual_opp_seed":1,"confidence":null,"actual_winner":"Florida","status":"direct_miss","earned":false,"points_possible":320,"points_earned":0}],"total_score":1320,"max_score":1920,"pct_of_max":68.8,"bracket_champion":"Houston","champion_seed":1,"by_round":{"R64":{"label":"First Round","earned":260,"possible":320,"correct":26,"direct_miss":6,"cascade_miss":0,"total":32},"R32":{"label":"Second Round","earned":260,"possible":320,"correct":13,"direct_miss":2,"cascade_miss":1,"total":16},"S16":{"label":"Sweet 16","earned":320,"possible":320,"correct":8,"direct_miss":0,"cascade_miss":0,"total":8},"E8":{"label":"Elite Eight","earned":320,"possible":320,"correct":4,"direct_miss":0,"cascade_miss":0,"total":4},"F4":{"label":"Final Four","earned":160,"possible":320,"correct":1,"direct_miss":1,"cascade_miss":0,"total":2},"Championship":{"label":"Championship","earned":0,"possible":320,"correct":0,"direct_miss":1,"cascade_miss":0,"total":1}},"espn_benchmarks":[{"label":"Average bracket","score":800,"percentile":50},{"label":"Top 25%","score":1000,"percentile":75},{"label":"Top 10%","score":1100,"percentile":90},{"label":"Top 1%","score":1350,"percentile":99},{"label":"Perfect bracket","score":1920,"percentile":100}],"est_percentile":98,"n_correct":52,"n_direct_miss":10,"n_cascade_miss":1};
+const ROUNDS=["R64", "R32", "S16", "E8", "F4", "Championship"];
+
+function switchTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function probColor(p){
+  if(p>=0.80) return 'var(--green)';
+  if(p>=0.65) return '#a3e635';
+  if(p>=0.55) return 'var(--accent)';
+  return 'var(--muted)';
+}
+function pct(v){return(v*100).toFixed(1)+'%'}
+
+function renderHero(){
+  const g=STATS;
+  const cards=[
+    {number:pct(g.accuracy),label:'Overall Accuracy',sub:g.correct+' of '+g.total+' games correct',primary:true},
+    ...Object.entries(g.by_group).map(([name,d])=>({number:pct(d.accuracy),label:name,sub:d.correct+' of '+d.total+' correct'})),
+    {number:g.upsets_called+'/'+g.upset_games,label:'Upsets Called',sub:'Lower seed beat higher seed'},
+  ];
+  document.getElementById('hero-grid').innerHTML=cards.map(c=>`
+    <div class="hero-card ${c.primary?'primary':''}">
+      <div class="hero-number">${c.number}</div>
+      <div class="hero-label">${c.label}</div>
+      <div class="hero-sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+function renderRoundGrid(){
+  const br=STATS.by_round;
+  document.getElementById('round-grid').innerHTML=ROUNDS.map(rnd=>{
+    if(!br[rnd])return'';
+    const d=br[rnd];
+    const col=d.accuracy>=0.75?'var(--green)':d.accuracy>=0.60?'var(--accent)':'var(--red)';
+    return`<div class="round-card">
+      <div class="round-name">${d.label}</div>
+      <div class="round-pct" style="color:${col}">${pct(d.accuracy)}</div>
+      <div class="round-games">${d.correct} / ${d.total} correct</div>
+      <div class="round-bar-wrap"><div class="round-bar-fill" style="width:${d.accuracy*100}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderRounds(){
+  let html='';
+  ROUNDS.forEach(rnd=>{
+    const games=GAMES.filter(g=>g.round===rnd);
+    if(!games.length)return;
+    const correct=games.filter(g=>g.correct).length;
+    html+=`<div class="round-section">
+      <div class="round-header">${games[0].round_label}
+        <span style="font-weight:400;font-size:.85rem;color:var(--muted);margin-left:10px">${correct}/${games.length} correct</span>
+      </div>
+      <div class="games-grid">${games.map(gameCard).join('')}</div>
+    </div>`;
+  });
+  document.getElementById('rounds-render').innerHTML=html;
+}
+
+function gameCard(g){
+  const cls=g.correct?'correct':'incorrect';
+  const badge=g.correct
+    ?`<span class="game-result-badge badge-correct">✓ Correct</span>`
+    :`<span class="game-result-badge badge-incorrect">✗ Missed</span>`;
+  const upsetBadge=g.is_upset?`<span class="game-result-badge badge-upset" style="margin-left:4px">Upset</span>`:'';
+  const col=probColor(g.prob_winner);
+  const scoreHtml=g.winner_score?`<div class="game-score">${g.winner_score}–${g.loser_score}</div>`:'';
+  const predictedHtml=!g.correct?`<div class="predicted-row">Model picked: ${g.predicted_winner}</div>`:'';
+  return`<div class="game-card ${cls}">
+    <div class="game-teams">
+      <span class="seed-badge">${g.winner_seed}</span><span class="team-winner">${g.winner}</span><br>
+      <span class="seed-badge" style="opacity:.5">${g.loser_seed}</span><span class="team-loser">def. ${g.loser}</span>
+    </div>
+    ${scoreHtml}${predictedHtml}
+    <div class="game-meta">
+      <span class="game-prob" style="color:${col}">${pct(g.prob_winner)} for winner</span>
+      <span>${badge}${upsetBadge}</span>
+    </div>
+  </div>`;
+}
+
+function renderWinsMisses(){
+  function card(g,isWin){
+    const cls=isWin?'win-card':'miss-card';
+    const col=isWin?'var(--green)':'var(--red)';
+    const desc=isWin
+      ?`Picked (${g.winner_seed}) ${g.winner} correctly`
+      :`Picked ${g.predicted_winner} — (${g.winner_seed}) ${g.winner} won`;
+    return`<div class="wm-card ${cls}">
+      <div>
+        <div class="wm-matchup">(${g.winner_seed}) ${g.winner} def. (${g.loser_seed}) ${g.loser}</div>
+        <div class="wm-round">${g.round_label} &middot; ${desc}</div>
+      </div>
+      <div class="wm-conf" style="color:${col}">${pct(g.confidence)}</div>
+    </div>`;
+  }
+  document.getElementById('wm-grid').innerHTML=`
+    <div>
+      <div class="wm-col-title wins">&#128170; Biggest Wins</div>
+      ${STATS.biggest_wins.map(g=>card(g,true)).join('')}
+    </div>
+    <div>
+      <div class="wm-col-title misses">❌ Biggest Misses</div>
+      ${STATS.biggest_misses.map(g=>card(g,false)).join('')}
+    </div>`;
+}
+
+function renderCalibration(){
+  const calib=STATS.calibration;
+  const chartH=160;
+  document.getElementById('calib-chart').innerHTML=calib.map(b=>{
+    const expH=Math.round(b.expected*chartH);
+    const actH=Math.round(b.actual*chartH);
+    const diff=Math.abs(b.actual-b.expected);
+    const actCol=diff<0.05?'var(--green)':diff<0.12?'var(--accent)':'var(--red)';
+    return`<div class="calib-col">
+      <div class="calib-bars">
+        <div class="calib-bar expected" style="height:${expH}px"></div>
+        <div class="calib-bar actual" style="height:${actH}px;background:${actCol}"></div>
+      </div>
+      <div class="calib-label">${b.label}<br><span style="color:var(--text);font-weight:600">${pct(b.actual)}</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('calib-table').innerHTML=`
+    <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+      <thead><tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+        <th style="text-align:left;padding:8px 0">Bucket</th>
+        <th style="text-align:right;padding:8px 0">Games</th>
+        <th style="text-align:right;padding:8px 0">Expected</th>
+        <th style="text-align:right;padding:8px 0">Actual</th>
+        <th style="text-align:right;padding:8px 0">Diff</th>
+      </tr></thead>
+      <tbody>${calib.map(b=>{
+        const diff=b.actual-b.expected;
+        const col=Math.abs(diff)<0.05?'var(--green)':Math.abs(diff)<0.12?'var(--accent)':'var(--red)';
+        return`<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0;font-weight:600">${b.label}</td>
+          <td style="padding:8px 0;text-align:right;color:var(--muted)">${b.count}</td>
+          <td style="padding:8px 0;text-align:right;color:var(--muted)">${pct(b.expected)}</td>
+          <td style="padding:8px 0;text-align:right;color:var(--accent);font-weight:600">${pct(b.actual)}</td>
+          <td style="padding:8px 0;text-align:right;color:${col};font-weight:600">${diff>=0?'+':''}${pct(diff)}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+function renderChampion(){
+  const c=CHAMP;
+  const el=document.getElementById('champion-render');
+  if(!c){el.innerHTML='<div style="color:var(--muted)">No champion data.</div>';return;}
+  const gamesHtml=c.games.map(g=>{
+    const col=probColor(g.prob_champ);
+    const fillW=Math.round(g.prob_champ*100);
+    const callBadge=g.prob_champ>0.5
+      ?`<span class="game-result-badge badge-correct" style="font-size:.6rem">Model called it</span>`
+      :`<span class="game-result-badge badge-upset" style="font-size:.6rem">Surprise pick</span>`;
+    return`<div class="champ-game">
+      <div class="champ-round">${g.round_label}</div>
+      <div class="champ-matchup">(${g.champ_seed}) ${c.champion} <span style="color:var(--muted);font-weight:400">def.</span> (${g.opp_seed}) ${g.opponent}</div>
+      <div class="champ-prob-wrap">
+        <div class="champ-prob-bar"><div class="champ-prob-fill" style="width:${fillW}%;background:${col}"></div></div>
+        <div class="champ-prob-val" style="color:${col}">${pct(g.prob_champ)}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        ${g.score?`<div class="champ-score">Final: ${g.score}</div>`:'<div></div>'}
+        ${callBadge}
+      </div>
+    </div>`;
+  }).join('');
+  const rating=c.avg_prob>=0.75?'High confidence champion pick':c.avg_prob>=0.60?'Moderate confidence pick':'Model had mixed signals on this champion';
+  el.innerHTML=`
+    <div class="champ-header">
+      <div class="champ-trophy">&#127942;</div>
+      <div>
+        <div class="champ-name">${c.champion}</div>
+        <div class="champ-meta">2025 NCAA Tournament Champion &middot; Avg predicted win prob: ${pct(c.avg_prob)} &middot; ${rating}</div>
+      </div>
+    </div>
+    <div class="section-title" style="margin-bottom:6px">Path to the Championship</div>
+    <div class="section-sub">Win probability shown from ${c.champion}&rsquo;s perspective for each game</div>
+    <div class="champ-games">${gamesHtml}</div>`;
+}
+
+function renderBracket(){
+  const b = BSIM;
+  const MAX = b.max_score;
+
+  // ── Hero cards ────────────────────────────────────────────────────────
+  document.getElementById('bs-hero').innerHTML = [
+    {num: b.total_score + ' pts', label: 'Bracket Score', sub: `out of ${MAX} possible (perfect bracket)`, primary: true},
+    {num: b.pct_of_max + '%',     label: 'Of Max Score',  sub: 'vs 100% = perfect bracket'},
+    {num: '~' + b.est_percentile + 'th', label: 'Est. Percentile', sub: 'among ESPN bracket entries'},
+    {num: b.bracket_champion,     label: 'Champion Pick', sub: `Seed #${b.champion_seed}`},
+    {num: b.n_correct,            label: 'Correct Picks', sub: `out of 63 bracket slots`},
+    {num: b.n_cascade_miss,       label: 'Cascade Misses', sub: 'busted by prior round wrong pick'},
+  ].map(c => `<div class="bs-score-card ${c.primary?'primary':''}">
+    <div class="bs-num">${c.num}</div>
+    <div class="bs-label">${c.label}</div>
+    <div class="bs-sub">${c.sub}</div>
+  </div>`).join('');
+
+  // ── National benchmarks bar chart ─────────────────────────────────────
+  const benchmarks = [
+    ...b.espn_benchmarks,
+    {label: 'This bracket', score: b.total_score, model: true},
+  ].sort((x,y) => x.score - y.score);
+
+  document.getElementById('bs-bench').innerHTML = benchmarks.map(bm => {
+    const fillPct = Math.round(bm.score / MAX * 100);
+    const isModel = bm.model === true;
+    const barCol  = isModel ? 'var(--accent)' : 'var(--muted)';
+    const labelCol= isModel ? 'var(--accent)' : 'var(--text)';
+    return `<div class="bs-bench-row">
+      <div class="bs-bench-label" style="color:${labelCol}">${bm.label}</div>
+      <div class="bs-bench-track">
+        <div class="bs-bench-fill" style="width:${fillPct}%;background:${barCol}"></div>
+      </div>
+      <div class="bs-bench-score" style="color:${labelCol}">${bm.score}</div>
+    </div>`;
+  }).join('');
+
+  // ── Round table ────────────────────────────────────────────────────────
+  const ROUND_KEYS = ["R64","R32","S16","E8","F4","Championship"];
+  const roundRows  = ROUND_KEYS.map(rnd => {
+    const d = b.by_round[rnd];
+    if(!d) return '';
+    const fillPct  = d.possible > 0 ? Math.round(d.earned / d.possible * 100) : 0;
+    const col      = fillPct >= 75 ? 'var(--green)' : fillPct >= 40 ? 'var(--accent)' : 'var(--red)';
+    return `<tr>
+      <td style="font-family:var(--font-head);font-weight:700">${d.label}</td>
+      <td style="font-family:var(--font-head);font-size:1.05rem;font-weight:800;color:var(--accent)">${d.earned}</td>
+      <td style="color:var(--muted)">${d.possible}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="bs-pts-bar-wrap"><div class="bs-pts-bar" style="width:${fillPct}%;background:${col}"></div></div>
+          <span style="font-family:var(--font-head);font-size:.8rem;font-weight:700;color:${col}">${fillPct}%</span>
+        </div>
+      </td>
+      <td><span class="bs-badge correct">${d.correct} ✓</span></td>
+      <td><span class="bs-badge direct">${d.direct_miss} ✗</span></td>
+      <td><span class="bs-badge cascade">${d.cascade_miss} ↯</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('bs-round-table').innerHTML = `
+    <thead><tr>
+      <th>Round</th><th>Pts Earned</th><th>Pts Possible</th><th>Efficiency</th>
+      <th>Correct</th><th>Direct Miss</th><th>Cascade Miss</th>
+    </tr></thead>
+    <tbody>${roundRows}</tbody>`;
+
+  // ── Per-pick cards with filter ─────────────────────────────────────────
+  const filterEl = document.getElementById('bs-round-filter');
+  const filterBtns = ['All', ...ROUND_KEYS].map((rnd,i) => {
+    const isFirst = i===0;
+    return `<button onclick="bsFilter('${rnd}',this)"
+      style="background:${isFirst?'var(--accent)':'var(--surface2)'};
+             color:${isFirst?'var(--bg)':'var(--muted)'};
+             border:1px solid var(--border);border-radius:4px;
+             padding:5px 12px;font-family:var(--font-head);font-size:.75rem;
+             font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.06em"
+      class="bs-filter-btn${isFirst?' bs-active':''}">${rnd}</button>`;
+  }).join('');
+  filterEl.innerHTML = filterBtns;
+  renderPickCards(b.picks);
+}
+
+function bsFilter(rnd, btn) {
+  document.querySelectorAll('.bs-filter-btn').forEach(b2 => {
+    b2.style.background='var(--surface2)'; b2.style.color='var(--muted)';
+    b2.classList.remove('bs-active');
+  });
+  btn.style.background='var(--accent)'; btn.style.color='var(--bg)';
+  btn.classList.add('bs-active');
+  const filtered = rnd==='All' ? BSIM.picks : BSIM.picks.filter(p=>p.round===rnd);
+  renderPickCards(filtered);
+}
+
+function renderPickCards(picks) {
+  const STATUS_LABEL = {correct:'✓ Correct',direct_miss:'✗ Direct Miss',cascade_miss:'↯ Cascade Miss'};
+  const STATUS_COL   = {correct:'var(--green)',direct_miss:'var(--red)',cascade_miss:'var(--blue)'};
+  document.getElementById('bs-picks-grid').innerHTML = picks.map(p => {
+    const col      = STATUS_COL[p.status];
+    const teamCls  = p.status==='correct'?'correct':p.status==='direct_miss'?'wrong':'cascade';
+    // Always show who the pick actually faced (actual_opp), not the model's predicted opponent.
+    // Confidence is only shown when the matchup was exactly as the model predicted.
+    const oppSeed  = p.actual_opp_seed ?? p.pred_opp_seed;
+    const oppName  = p.actual_opp      ?? p.pred_opp;
+    const confStr  = p.confidence != null ? `${Math.round(p.confidence*100)}% confidence` : 'matchup diverged from prediction';
+    const detail   = p.status==='correct'
+      ? `vs (#${oppSeed}) ${oppName} &mdash; earned ${p.points_earned} pts`
+      : p.status==='direct_miss'
+        ? `vs (#${oppSeed}) ${oppName} &mdash; actual winner: ${p.actual_winner}`
+        : `${p.pick} was eliminated in a prior round &mdash; ${p.actual_winner||'?'} advanced instead`;
+    return `<div class="bs-pick-card ${p.status}">
+      <div class="bs-pick-round">
+        ${p.round} &middot; ${p.region}
+        <span class="bs-pts-earned" style="color:${p.earned?'var(--accent)':'var(--muted)'}">$${p.earned?'+'+p.points_earned:'0 pts'}</span>
+      </div>
+      <div class="bs-pick-team ${teamCls}">(#${p.pick_seed}) ${p.pick}</div>
+      <div class="bs-pick-detail">${detail}</div>
+      <div style="margin-top:6px">
+        <span class="bs-badge ${p.status==='correct'?'correct':p.status==='direct_miss'?'direct':'cascade'}">${STATUS_LABEL[p.status]}</span>
+        <span style="font-size:.68rem;color:var(--muted);margin-left:6px">${confStr}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
+renderHero();
+renderRoundGrid();
+renderRounds();
+renderWinsMisses();
+renderCalibration();
+renderChampion();
+renderBracket();
+</script>
+</body>
+</html>
