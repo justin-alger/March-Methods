@@ -1,8 +1,8 @@
-# March Methods — NCAA Tournament Prediction Model
+# March Methods: NCAA Tournament Prediction Model
 
 > *The analytics behind the madness.*
 
-A machine learning system that predicts NCAA Tournament outcomes using pre-tournament regular season data. Trained on 12 years of tournament history, the model produces win probabilities for all 63 games, simulates the full bracket, and generates an interactive HTML report — all before a single game is played.
+A machine learning system that predicts NCAA Tournament outcomes using pre-tournament regular season data. Trained on 12 years of tournament history, the model produces win probabilities for all 63 games, simulates the full bracket, and generates an interactive HTML report, all before a single game is played.
 
 **2025 holdout result: 84.1% game accuracy · 1,270/1,920 bracket points · ~96th percentile nationally (ESPN Tournament Challenge)**
 
