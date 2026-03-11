@@ -4,7 +4,7 @@
 
 A machine learning system that predicts NCAA Tournament outcomes using pre-tournament regular season data. Trained on 12 years of tournament history, the model produces win probabilities for all 63 games, simulates the full bracket, and generates an interactive HTML report, all before a single game is played.
 
-**2025 holdout result: 84.1% game accuracy · 1,270/1,920 bracket points · ~96th percentile nationally (ESPN Tournament Challenge)**
+**2025 holdout result: 82.5% game accuracy · 1,320/1,920 bracket points · ~88th percentile nationally (ESPN Tournament Challenge)**
 
 **View Complete 2025 Results [here](https://justin-alger.github.io/March-Methods/results_2025.html).**
 
@@ -157,9 +157,9 @@ Fold 11: Train on 2013-2023  →  Test on 2024
 
 | Metric | Score |
 |--------|-------|
-| Log-Loss | 0.5821 |
-| Accuracy | 73.6% |
-| AUC | 0.8144 |
+| Log-Loss | 0.5309 |
+| Accuracy | 73.2% |
+| AUC | 0.8137 |
 
 ### True Holdout: 2025
 
@@ -178,15 +178,15 @@ This is a meaningful distinction. It would be easy to report inflated accuracy b
 
 | Round | Correct | Total | Accuracy |
 |-------|---------|-------|----------|
-| First Round (R64) | 27 | 32 | 84.4% |
+| First Round (R64) | 26 | 32 | 81.3% |
 | Second Round (R32) | 13 | 16 | 81.3% |
 | Sweet 16 | 8 | 8 | **100.0%** |
 | Elite Eight | 4 | 4 | **100.0%** |
 | Final Four | 1 | 2 | 50.0% |
 | Championship | 0 | 1 | 0.0% |
-| **Overall** | **53** | **63** | **84.1%** |
+| **Overall** | **52** | **63** | **82.5%** |
 
-**AUC: 0.8917**
+**AUC: 0.9000**
 
 The model correctly called every Sweet 16 and Elite Eight game when evaluated against the actual participants. The Final Four miss was Florida over Auburn (the model favored Auburn). The championship miss was Florida over Houston. The model had Houston winning the title.
 
@@ -221,28 +221,28 @@ Three outcome types:
 
 | Round | Points Earned | Points Possible | Correct | Direct Miss | Cascade Miss |
 |-------|--------------|-----------------|---------|-------------|--------------|
-| First Round | 270 | 320 | 27 | 5 | 0 |
-| Second Round | 240 | 320 | 12 | 2 | 2 |
-| Sweet 16 | 280 | 320 | 7 | 0 | 1 |
+| First Round | 260 | 320 | 26 | 6 | 0 |
+| Second Round | 260 | 320 | 13 | 2 | 1 |
+| Sweet 16 | 320 | 320 | 8 | 0 | 0 |
 | Elite Eight | 320 | 320 | 4 | 0 | 0 |
 | Final Four | 160 | 320 | 1 | 1 | 0 |
 | Championship | 0 | 320 | 0 | 1 | 0 |
-| **Total** | **1,270** | **1,920** | **51** | **9** | **3** |
+| **Total** | **1,320** | **1,920** | **52** | **10** | **1** |
 
-**~96th percentile nationally (ESPN Tournament Challenge 2025)**
+**~88th percentile nationally (ESPN Tournament Challenge 2025)**
 
 For context:
 
 | Benchmark | Score |
 |-----------|-------|
 | Average bracket | ~800 |
-| Top 25% | ~1,000 |
-| Top 10% | ~1,100 |
-| **This model (2025)** | **1,270** |
-| Top 1% | ~1,350 |
+| Top 25% | ~1,100 |
+| **This model (2025)** | **1,320** |
+| Top 10% | ~1,370 |
+| Top 1% | ~1,660 |
 | Perfect bracket | 1,920 |
 
-The model scored a perfect Elite Eight (4/4) and went 7/8 in the Sweet 16, which drove the high bracket score despite missing the championship game. The 5 first-round upsets it couldn't see produced only 3 cascade misses in later rounds. The cascade damage was limited because most of those upsets came from seeds (6–12) that the model hadn't projected deep into the bracket.
+The model scored a perfect Elite Eight (4/4) and went 7/8 in the Sweet 16, which drove the high bracket score despite missing the championship game. The 6 first-round upsets it couldn't see produced only 1 cascade misses in later rounds. The cascade damage was limited because most of those upsets came from seeds (6–12) that the model hadn't projected deep into the bracket.
 
 ---
 
