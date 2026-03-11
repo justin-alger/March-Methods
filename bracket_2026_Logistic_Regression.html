@@ -1,0 +1,5915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCAA Tournament 2026 — Bracket Predictions</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0e1a;
+    --surface:   #111827;
+    --surface2:  #1a2235;
+    --border:    #1e2d42;
+    --accent:    #e8a020;
+    --accent2:   #f0c060;
+    --blue:      #3b82f6;
+    --green:     #22c55e;
+    --red:       #ef4444;
+    --text:      #e8eaf0;
+    --muted:     #7a8aa0;
+    --font-head: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f1d35 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title {
+    font-family: var(--font-head);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .header-sub {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-champion {
+    text-align: right;
+  }
+  .champion-label {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .champion-name {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 14px 28px;
+    font-family: var(--font-head);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── Panels ── */
+  .panel { display: none; padding: 32px 40px; }
+  .panel.active { display: block; }
+
+  /* ── Bracket View ── */
+  .bracket-scroll {
+    overflow-x: auto;
+    padding-bottom: 20px;
+  }
+  .bracket-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    min-width: 1100px;
+    align-items: start;
+  }
+  .bracket-left  { display: flex; gap: 12px; justify-content: flex-start; }
+  .bracket-right { display: flex; gap: 12px; justify-content: flex-end; flex-direction: row-reverse; }
+  .bracket-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: center;
+    min-width: 200px;
+  }
+
+  .round-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 170px;
+  }
+  .round-header {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-align: center;
+    padding: 8px 0 12px;
+  }
+
+  /* ── Matchup Card ── */
+  .matchup-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .matchup {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    width: 160px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.1s;
+    position: relative;
+  }
+  .matchup:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    z-index: 10;
+  }
+  .team-row {
+    display: flex;
+    align-items: center;
+    padding: 5px 8px;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .team-row.winner {
+    background: rgba(232, 160, 32, 0.12);
+  }
+  .team-row.loser {
+    opacity: 0.5;
+  }
+  .seed-badge {
+    font-family: var(--font-head);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 16px;
+    text-align: center;
+  }
+  .team-name {
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.02em;
+  }
+  .win-prob {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent2);
+    min-width: 36px;
+    text-align: right;
+  }
+  .matchup-divider {
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Confidence bar at bottom of matchup */
+  .conf-bar {
+    height: 3px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .conf-bar-fill {
+    height: 100%;
+    transition: width 0.3s;
+  }
+
+  /* Connector lines between rounds */
+  .connector {
+    width: 12px;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+  }
+
+  /* Spacers between matchups to align bracket */
+  .matchup-spacer { flex-shrink: 0; }
+
+  /* ── Final Four / Championship center ── */
+  .center-rounds {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding-top: 40px;
+  }
+  .center-label {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .championship-card {
+    background: linear-gradient(135deg, var(--surface2), var(--surface));
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    min-width: 170px;
+  }
+  .championship-winner {
+    font-family: var(--font-head);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .championship-prob {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── Tooltip ── */
+  .tooltip {
+    position: fixed;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.82rem;
+    pointer-events: none;
+    z-index: 1000;
+    min-width: 220px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none;
+  }
+  .tooltip-title {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .tooltip-matchup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .tooltip-team {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+  }
+  .tooltip-team.winner { background: rgba(232,160,32,0.15); }
+  .tooltip-pct {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .tooltip-conf {
+    font-size: 0.75rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  /* ── Monte Carlo Table ── */
+  .mc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text);
+  }
+  .section-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  th {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+  }
+  th:hover { color: var(--text); }
+  th.sort-asc::after  { content: ' ↑'; color: var(--accent); }
+  th.sort-desc::after { content: ' ↓'; color: var(--accent); }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  .prob-cell {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .prob-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .prob-bar {
+    height: 6px;
+    border-radius: 3px;
+    flex: 1;
+    background: var(--border);
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .prob-bar-fill { height: 100%; border-radius: 3px; }
+  .seed-pill {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 24px;
+    text-align: center;
+  }
+  .region-tag {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .header { padding: 16px 20px; flex-direction: column; gap: 12px; text-align: center; }
+    .tabs { padding: 0 20px; overflow-x: auto; }
+    .panel { padding: 20px; }
+  }
+
+  /* ── Analysis Tab ── */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 1100px) { .analysis-grid { grid-template-columns: 1fr; } }
+
+  .path-game {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .path-game:hover { border-color: var(--accent); }
+  .path-game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .path-round {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .path-matchup {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .path-prob {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .contrib-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  .contrib-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    min-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .contrib-bar-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    height: 14px;
+  }
+  .contrib-bar-center {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--border);
+  }
+  .contrib-bar-fill {
+    height: 10px;
+    border-radius: 2px;
+    position: absolute;
+    top: 2px;
+  }
+  .contrib-val {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 38px;
+    text-align: right;
+  }
+  .net-summary {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+  }
+  .net-pos { color: var(--green); }
+  .net-neg { color: var(--red); }
+
+  .contenders-wrap { overflow-x: auto; }
+  .contenders-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .contenders-table th {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding: 8px 10px;
+    text-align: right;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  .contenders-table th:first-child,
+  .contenders-table th:nth-child(2) { text-align: left; }
+  .contenders-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    vertical-align: middle;
+  }
+  .contenders-table td:first-child,
+  .contenders-table td:nth-child(2) { text-align: left; }
+  .contenders-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .champ-row td { background: rgba(232,160,32,0.07) !important; }
+  .diff-pos { color: var(--green); font-size: 0.7rem; }
+  .diff-neg { color: var(--red);   font-size: 0.7rem; }
+  .diff-neu { color: var(--accent); font-size: 0.7rem; }  /* tempo — neither better nor worse */
+  .stat-main { font-weight: 600; }
+
+
+  /* ── Region toggle bar ── */
+  .bracket-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 16px 0 8px;
+    flex-wrap: wrap;
+  }
+  .bracket-toggle-btn {
+    padding: 6px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .bracket-toggle-btn:hover { background: var(--surface2); color: var(--text); }
+  .bracket-toggle-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(240,192,96,0.08);
+  }
+
+  /* Region color accents */
+  .bracket-toggle-btn.active[data-region="East"]    { border-color:#60a5fa; color:#60a5fa; background:rgba(96,165,250,0.08); }
+  .bracket-toggle-btn.active[data-region="Midwest"] { border-color:#4ade80; color:#4ade80; background:rgba(74,222,128,0.08); }
+  .bracket-toggle-btn.active[data-region="South"]   { border-color:#f87171; color:#f87171; background:rgba(248,113,113,0.08); }
+  .bracket-toggle-btn.active[data-region="West"]    { border-color:#a78bfa; color:#a78bfa; background:rgba(167,139,250,0.08); }
+
+  /* Region label header above each region block in All view */
+  .region-header-label {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 4px 8px 10px;
+    white-space: nowrap;
+  }
+
+  /* Single-region bracket: fills available width, rounds read L→R */
+  .single-bracket-container {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+    min-width: 740px;
+  }
+  .single-round-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 170px;
+  }
+  .single-region-champion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    min-width: 140px;
+  }
+  .region-champ-card {
+    background: linear-gradient(135deg, var(--surface2), var(--surface));
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .region-champ-label {
+    font-family: var(--font-head);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+  .region-champ-name {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  .region-champ-seed {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">NCAA Tournament 2026</div>
+    <div class="header-sub">Model Predictions · Logistic Regression · Modeling by Justin Alger, Integ Analytics</div>
+  </div>
+  <div class="header-champion">
+    <div class="champion-label">Predicted Champion</div>
+    <div class="champion-name">Michigan</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('bracket')">Bracket</div>
+  <div class="tab" onclick="showTab('monte-carlo')">Monte Carlo</div>
+  <div class="tab" onclick="showTab('analysis')">Analysis</div>
+</div>
+
+<div id="bracket" class="panel active">
+  <div class="bracket-toggle" id="bracket-toggle"></div>
+  <div class="bracket-scroll">
+    <div id="bracket-render"></div>
+  </div>
+</div>
+
+<div id="monte-carlo" class="panel">
+  <div class="mc-header">
+    <div>
+      <div class="section-title">Round-by-Round Probabilities</div>
+      <div class="section-sub">10,000 simulated tournaments · Click column headers to sort</div>
+    </div>
+  </div>
+  <div class="filter-row" id="region-filters">
+    <button class="filter-btn active" onclick="filterRegion('All', this)">All</button>
+  </div>
+  <div style="overflow-x:auto;">
+    <table id="mc-table">
+      <thead>
+        <tr>
+          <th onclick="sortTable('seed')">Seed</th>
+          <th onclick="sortTable('team')">Team</th>
+          <th onclick="sortTable('region')">Region</th>
+          <th onclick="sortTable('R32')" title="Make Round of 32">R32</th>
+          <th onclick="sortTable('S16')" title="Make Sweet 16">S16</th>
+          <th onclick="sortTable('E8')"  title="Make Elite Eight">E8</th>
+          <th onclick="sortTable('F4')"  title="Make Final Four">F4</th>
+          <th onclick="sortTable('Championship')" title="Reach Championship">Final</th>
+          <th onclick="sortTable('Winner')" title="Win Championship">Win %</th>
+        </tr>
+      </thead>
+      <tbody id="mc-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="analysis" class="panel">
+  <div class="analysis-grid">
+    <div>
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;">
+        <div class="section-title">Path to the Final Four</div>
+        <select id="path-team-select"
+                onchange="switchPath(this.value)"
+                style="background:var(--surface2);color:var(--text);border:1px solid var(--border);
+                       border-radius:5px;padding:4px 10px;font-family:var(--font-head);
+                       font-size:0.85rem;font-weight:700;cursor:pointer;">
+        </select>
+      </div>
+      <div class="section-sub" style="margin-bottom:20px">
+        Feature contributions per game · Positive (green) = pushed toward win · Negative (red) = model overcame
+      </div>
+      <div id="path-render"></div>
+    </div>
+    <div>
+      <div class="section-title" style="margin-bottom:6px">Top Contenders Compared</div>
+      <div class="section-sub" style="margin-bottom:20px">
+        Key stats for top teams by championship probability · Δ shows difference vs predicted champion
+      </div>
+      <div class="contenders-wrap">
+        <table class="contenders-table">
+          <thead id="contenders-head"></thead>
+          <tbody id="contenders-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DET_GAMES     = [
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Duke",
+    "seed_a": 1,
+    "team_b": "Lehigh",
+    "seed_b": 16,
+    "prob_a": 0.9961,
+    "winner": "Duke",
+    "winner_seed": 1,
+    "loser": "Lehigh",
+    "loser_seed": 16,
+    "winner_prob": 0.9961
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Georgia",
+    "seed_a": 8,
+    "team_b": "Ohio State",
+    "seed_b": 9,
+    "prob_a": 0.3543,
+    "winner": "Ohio State",
+    "winner_seed": 9,
+    "loser": "Georgia",
+    "loser_seed": 8,
+    "winner_prob": 0.6457
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Arkansas",
+    "seed_a": 5,
+    "team_b": "South Florida",
+    "seed_b": 12,
+    "prob_a": 0.8669,
+    "winner": "Arkansas",
+    "winner_seed": 5,
+    "loser": "South Florida",
+    "loser_seed": 12,
+    "winner_prob": 0.8669
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Texas Tech",
+    "seed_a": 4,
+    "team_b": "Monmouth",
+    "seed_b": 13,
+    "prob_a": 0.9757,
+    "winner": "Texas Tech",
+    "winner_seed": 4,
+    "loser": "Monmouth",
+    "loser_seed": 13,
+    "winner_prob": 0.9757
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Tennessee",
+    "seed_a": 6,
+    "team_b": "SMU",
+    "seed_b": 11,
+    "prob_a": 0.7738,
+    "winner": "Tennessee",
+    "winner_seed": 6,
+    "loser": "SMU",
+    "loser_seed": 11,
+    "winner_prob": 0.7738
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Iowa State",
+    "seed_a": 3,
+    "team_b": "North Dakota State",
+    "seed_b": 14,
+    "prob_a": 0.9473,
+    "winner": "Iowa State",
+    "winner_seed": 3,
+    "loser": "North Dakota State",
+    "loser_seed": 14,
+    "winner_prob": 0.9473
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Villanova",
+    "seed_a": 7,
+    "team_b": "Miami (OH)",
+    "seed_b": 10,
+    "prob_a": 0.8302,
+    "winner": "Villanova",
+    "winner_seed": 7,
+    "loser": "Miami (OH)",
+    "loser_seed": 10,
+    "winner_prob": 0.8302
+  },
+  {
+    "round": "R64",
+    "region": "East",
+    "team_a": "Michigan St.",
+    "seed_a": 2,
+    "team_b": "Wright St.",
+    "seed_b": 15,
+    "prob_a": 0.8821,
+    "winner": "Michigan St.",
+    "winner_seed": 2,
+    "loser": "Wright St.",
+    "loser_seed": 15,
+    "winner_prob": 0.8821
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Michigan",
+    "seed_a": 1,
+    "team_b": "LIU",
+    "seed_b": 16,
+    "prob_a": 0.9954,
+    "winner": "Michigan",
+    "winner_seed": 1,
+    "loser": "LIU",
+    "loser_seed": 16,
+    "winner_prob": 0.9954
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Clemson",
+    "seed_a": 8,
+    "team_b": "TCU",
+    "seed_b": 9,
+    "prob_a": 0.7552,
+    "winner": "Clemson",
+    "winner_seed": 8,
+    "loser": "TCU",
+    "loser_seed": 9,
+    "winner_prob": 0.7552
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Vanderbilt",
+    "seed_a": 5,
+    "team_b": "Yale",
+    "seed_b": 12,
+    "prob_a": 0.9302,
+    "winner": "Vanderbilt",
+    "winner_seed": 5,
+    "loser": "Yale",
+    "loser_seed": 12,
+    "winner_prob": 0.9302
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Kansas",
+    "seed_a": 4,
+    "team_b": "Stephen F. Austin",
+    "seed_b": 13,
+    "prob_a": 0.8066,
+    "winner": "Kansas",
+    "winner_seed": 4,
+    "loser": "Stephen F. Austin",
+    "loser_seed": 13,
+    "winner_prob": 0.8066
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "North Carolina",
+    "seed_a": 6,
+    "team_b": "Texas",
+    "seed_b": 11,
+    "prob_a": 0.4937,
+    "winner": "Texas",
+    "winner_seed": 11,
+    "loser": "North Carolina",
+    "loser_seed": 6,
+    "winner_prob": 0.5063
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Purdue",
+    "seed_a": 3,
+    "team_b": "Merrimack",
+    "seed_b": 14,
+    "prob_a": 0.9244,
+    "winner": "Purdue",
+    "winner_seed": 3,
+    "loser": "Merrimack",
+    "loser_seed": 14,
+    "winner_prob": 0.9244
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Kentucky",
+    "seed_a": 7,
+    "team_b": "UCF",
+    "seed_b": 10,
+    "prob_a": 0.5993,
+    "winner": "Kentucky",
+    "winner_seed": 7,
+    "loser": "UCF",
+    "loser_seed": 10,
+    "winner_prob": 0.5993
+  },
+  {
+    "round": "R64",
+    "region": "Midwest",
+    "team_a": "Uconn",
+    "seed_a": 2,
+    "team_b": "Queens",
+    "seed_b": 15,
+    "prob_a": 0.9765,
+    "winner": "Uconn",
+    "winner_seed": 2,
+    "loser": "Queens",
+    "loser_seed": 15,
+    "winner_prob": 0.9765
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Florida",
+    "seed_a": 1,
+    "team_b": "Furman",
+    "seed_b": 16,
+    "prob_a": 0.9868,
+    "winner": "Florida",
+    "winner_seed": 1,
+    "loser": "Furman",
+    "loser_seed": 16,
+    "winner_prob": 0.9868
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Utah St.",
+    "seed_a": 8,
+    "team_b": "Iowa",
+    "seed_b": 9,
+    "prob_a": 0.4249,
+    "winner": "Iowa",
+    "winner_seed": 9,
+    "loser": "Utah St.",
+    "loser_seed": 8,
+    "winner_prob": 0.5751
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "St. John's",
+    "seed_a": 5,
+    "team_b": "High Point",
+    "seed_b": 12,
+    "prob_a": 0.8774,
+    "winner": "St. John's",
+    "winner_seed": 5,
+    "loser": "High Point",
+    "loser_seed": 12,
+    "winner_prob": 0.8774
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Virginia",
+    "seed_a": 4,
+    "team_b": "Northern Iowa",
+    "seed_b": 13,
+    "prob_a": 0.8264,
+    "winner": "Virginia",
+    "winner_seed": 4,
+    "loser": "Northern Iowa",
+    "loser_seed": 13,
+    "winner_prob": 0.8264
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Louisville",
+    "seed_a": 6,
+    "team_b": "Missouri",
+    "seed_b": 11,
+    "prob_a": 0.6939,
+    "winner": "Louisville",
+    "winner_seed": 6,
+    "loser": "Missouri",
+    "loser_seed": 11,
+    "winner_prob": 0.6939
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Nebraska",
+    "seed_a": 3,
+    "team_b": "UC Irvine",
+    "seed_b": 14,
+    "prob_a": 0.9285,
+    "winner": "Nebraska",
+    "winner_seed": 3,
+    "loser": "UC Irvine",
+    "loser_seed": 14,
+    "winner_prob": 0.9285
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Saint Mary's",
+    "seed_a": 7,
+    "team_b": "N.C. State",
+    "seed_b": 10,
+    "prob_a": 0.439,
+    "winner": "N.C. State",
+    "winner_seed": 10,
+    "loser": "Saint Mary's",
+    "loser_seed": 7,
+    "winner_prob": 0.561
+  },
+  {
+    "round": "R64",
+    "region": "South",
+    "team_a": "Houston",
+    "seed_a": 2,
+    "team_b": "Tennessee St.",
+    "seed_b": 15,
+    "prob_a": 0.9893,
+    "winner": "Houston",
+    "winner_seed": 2,
+    "loser": "Tennessee St.",
+    "loser_seed": 15,
+    "winner_prob": 0.9893
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "Arizona",
+    "seed_a": 1,
+    "team_b": "UMBC",
+    "seed_b": 16,
+    "prob_a": 0.99,
+    "winner": "Arizona",
+    "winner_seed": 1,
+    "loser": "UMBC",
+    "loser_seed": 16,
+    "winner_prob": 0.99
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "UCLA",
+    "seed_a": 8,
+    "team_b": "Texas A&M",
+    "seed_b": 9,
+    "prob_a": 0.5652,
+    "winner": "UCLA",
+    "winner_seed": 8,
+    "loser": "Texas A&M",
+    "loser_seed": 9,
+    "winner_prob": 0.5652
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "Wisconsin",
+    "seed_a": 5,
+    "team_b": "Liberty",
+    "seed_b": 12,
+    "prob_a": 0.9113,
+    "winner": "Wisconsin",
+    "winner_seed": 5,
+    "loser": "Liberty",
+    "loser_seed": 12,
+    "winner_prob": 0.9113
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "Gonzaga",
+    "seed_a": 4,
+    "team_b": "Utah Valley",
+    "seed_b": 13,
+    "prob_a": 0.924,
+    "winner": "Gonzaga",
+    "winner_seed": 4,
+    "loser": "Utah Valley",
+    "loser_seed": 13,
+    "winner_prob": 0.924
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "BYU",
+    "seed_a": 6,
+    "team_b": "Santa Clara",
+    "seed_b": 11,
+    "prob_a": 0.3641,
+    "winner": "Santa Clara",
+    "winner_seed": 11,
+    "loser": "BYU",
+    "loser_seed": 6,
+    "winner_prob": 0.6359
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "Alabama",
+    "seed_a": 3,
+    "team_b": "Troy",
+    "seed_b": 14,
+    "prob_a": 0.9571,
+    "winner": "Alabama",
+    "winner_seed": 3,
+    "loser": "Troy",
+    "loser_seed": 14,
+    "winner_prob": 0.9571
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "Miami",
+    "seed_a": 7,
+    "team_b": "Saint Louis",
+    "seed_b": 10,
+    "prob_a": 0.4621,
+    "winner": "Saint Louis",
+    "winner_seed": 10,
+    "loser": "Miami",
+    "loser_seed": 7,
+    "winner_prob": 0.5379
+  },
+  {
+    "round": "R64",
+    "region": "West",
+    "team_a": "Illinois",
+    "seed_a": 2,
+    "team_b": "Portland St.",
+    "seed_b": 15,
+    "prob_a": 0.9833,
+    "winner": "Illinois",
+    "winner_seed": 2,
+    "loser": "Portland St.",
+    "loser_seed": 15,
+    "winner_prob": 0.9833
+  },
+  {
+    "round": "R32",
+    "region": "East",
+    "team_a": "Duke",
+    "seed_a": 1,
+    "team_b": "Ohio State",
+    "seed_b": 9,
+    "prob_a": 0.6782,
+    "winner": "Duke",
+    "winner_seed": 1,
+    "loser": "Ohio State",
+    "loser_seed": 9,
+    "winner_prob": 0.6782
+  },
+  {
+    "round": "R32",
+    "region": "East",
+    "team_a": "Arkansas",
+    "seed_a": 5,
+    "team_b": "Texas Tech",
+    "seed_b": 4,
+    "prob_a": 0.5158,
+    "winner": "Arkansas",
+    "winner_seed": 5,
+    "loser": "Texas Tech",
+    "loser_seed": 4,
+    "winner_prob": 0.5158
+  },
+  {
+    "round": "R32",
+    "region": "East",
+    "team_a": "Tennessee",
+    "seed_a": 6,
+    "team_b": "Iowa State",
+    "seed_b": 3,
+    "prob_a": 0.5351,
+    "winner": "Tennessee",
+    "winner_seed": 6,
+    "loser": "Iowa State",
+    "loser_seed": 3,
+    "winner_prob": 0.5351
+  },
+  {
+    "round": "R32",
+    "region": "East",
+    "team_a": "Villanova",
+    "seed_a": 7,
+    "team_b": "Michigan St.",
+    "seed_b": 2,
+    "prob_a": 0.4331,
+    "winner": "Michigan St.",
+    "winner_seed": 2,
+    "loser": "Villanova",
+    "loser_seed": 7,
+    "winner_prob": 0.5669
+  },
+  {
+    "round": "R32",
+    "region": "Midwest",
+    "team_a": "Michigan",
+    "seed_a": 1,
+    "team_b": "Clemson",
+    "seed_b": 8,
+    "prob_a": 0.8881,
+    "winner": "Michigan",
+    "winner_seed": 1,
+    "loser": "Clemson",
+    "loser_seed": 8,
+    "winner_prob": 0.8881
+  },
+  {
+    "round": "R32",
+    "region": "Midwest",
+    "team_a": "Vanderbilt",
+    "seed_a": 5,
+    "team_b": "Kansas",
+    "seed_b": 4,
+    "prob_a": 0.601,
+    "winner": "Vanderbilt",
+    "winner_seed": 5,
+    "loser": "Kansas",
+    "loser_seed": 4,
+    "winner_prob": 0.601
+  },
+  {
+    "round": "R32",
+    "region": "Midwest",
+    "team_a": "Texas",
+    "seed_a": 11,
+    "team_b": "Purdue",
+    "seed_b": 3,
+    "prob_a": 0.2917,
+    "winner": "Purdue",
+    "winner_seed": 3,
+    "loser": "Texas",
+    "loser_seed": 11,
+    "winner_prob": 0.7083
+  },
+  {
+    "round": "R32",
+    "region": "Midwest",
+    "team_a": "Kentucky",
+    "seed_a": 7,
+    "team_b": "Uconn",
+    "seed_b": 2,
+    "prob_a": 0.2784,
+    "winner": "Uconn",
+    "winner_seed": 2,
+    "loser": "Kentucky",
+    "loser_seed": 7,
+    "winner_prob": 0.7216
+  },
+  {
+    "round": "R32",
+    "region": "South",
+    "team_a": "Florida",
+    "seed_a": 1,
+    "team_b": "Iowa",
+    "seed_b": 9,
+    "prob_a": 0.7757,
+    "winner": "Florida",
+    "winner_seed": 1,
+    "loser": "Iowa",
+    "loser_seed": 9,
+    "winner_prob": 0.7757
+  },
+  {
+    "round": "R32",
+    "region": "South",
+    "team_a": "St. John's",
+    "seed_a": 5,
+    "team_b": "Virginia",
+    "seed_b": 4,
+    "prob_a": 0.4804,
+    "winner": "Virginia",
+    "winner_seed": 4,
+    "loser": "St. John's",
+    "loser_seed": 5,
+    "winner_prob": 0.5196
+  },
+  {
+    "round": "R32",
+    "region": "South",
+    "team_a": "Louisville",
+    "seed_a": 6,
+    "team_b": "Nebraska",
+    "seed_b": 3,
+    "prob_a": 0.5009,
+    "winner": "Louisville",
+    "winner_seed": 6,
+    "loser": "Nebraska",
+    "loser_seed": 3,
+    "winner_prob": 0.5009
+  },
+  {
+    "round": "R32",
+    "region": "South",
+    "team_a": "N.C. State",
+    "seed_a": 10,
+    "team_b": "Houston",
+    "seed_b": 2,
+    "prob_a": 0.1801,
+    "winner": "Houston",
+    "winner_seed": 2,
+    "loser": "N.C. State",
+    "loser_seed": 10,
+    "winner_prob": 0.8199
+  },
+  {
+    "round": "R32",
+    "region": "West",
+    "team_a": "Arizona",
+    "seed_a": 1,
+    "team_b": "UCLA",
+    "seed_b": 8,
+    "prob_a": 0.6951,
+    "winner": "Arizona",
+    "winner_seed": 1,
+    "loser": "UCLA",
+    "loser_seed": 8,
+    "winner_prob": 0.6951
+  },
+  {
+    "round": "R32",
+    "region": "West",
+    "team_a": "Wisconsin",
+    "seed_a": 5,
+    "team_b": "Gonzaga",
+    "seed_b": 4,
+    "prob_a": 0.4982,
+    "winner": "Gonzaga",
+    "winner_seed": 4,
+    "loser": "Wisconsin",
+    "loser_seed": 5,
+    "winner_prob": 0.5018
+  },
+  {
+    "round": "R32",
+    "region": "West",
+    "team_a": "Santa Clara",
+    "seed_a": 11,
+    "team_b": "Alabama",
+    "seed_b": 3,
+    "prob_a": 0.2331,
+    "winner": "Alabama",
+    "winner_seed": 3,
+    "loser": "Santa Clara",
+    "loser_seed": 11,
+    "winner_prob": 0.7669
+  },
+  {
+    "round": "R32",
+    "region": "West",
+    "team_a": "Saint Louis",
+    "seed_a": 10,
+    "team_b": "Illinois",
+    "seed_b": 2,
+    "prob_a": 0.1229,
+    "winner": "Illinois",
+    "winner_seed": 2,
+    "loser": "Saint Louis",
+    "loser_seed": 10,
+    "winner_prob": 0.8771
+  },
+  {
+    "round": "S16",
+    "region": "East",
+    "team_a": "Duke",
+    "seed_a": 1,
+    "team_b": "Arkansas",
+    "seed_b": 5,
+    "prob_a": 0.6376,
+    "winner": "Duke",
+    "winner_seed": 1,
+    "loser": "Arkansas",
+    "loser_seed": 5,
+    "winner_prob": 0.6376
+  },
+  {
+    "round": "S16",
+    "region": "East",
+    "team_a": "Tennessee",
+    "seed_a": 6,
+    "team_b": "Michigan St.",
+    "seed_b": 2,
+    "prob_a": 0.6813,
+    "winner": "Tennessee",
+    "winner_seed": 6,
+    "loser": "Michigan St.",
+    "loser_seed": 2,
+    "winner_prob": 0.6813
+  },
+  {
+    "round": "S16",
+    "region": "Midwest",
+    "team_a": "Michigan",
+    "seed_a": 1,
+    "team_b": "Vanderbilt",
+    "seed_b": 5,
+    "prob_a": 0.7598,
+    "winner": "Michigan",
+    "winner_seed": 1,
+    "loser": "Vanderbilt",
+    "loser_seed": 5,
+    "winner_prob": 0.7598
+  },
+  {
+    "round": "S16",
+    "region": "Midwest",
+    "team_a": "Purdue",
+    "seed_a": 3,
+    "team_b": "Uconn",
+    "seed_b": 2,
+    "prob_a": 0.4861,
+    "winner": "Uconn",
+    "winner_seed": 2,
+    "loser": "Purdue",
+    "loser_seed": 3,
+    "winner_prob": 0.5139
+  },
+  {
+    "round": "S16",
+    "region": "South",
+    "team_a": "Florida",
+    "seed_a": 1,
+    "team_b": "Virginia",
+    "seed_b": 4,
+    "prob_a": 0.6639,
+    "winner": "Florida",
+    "winner_seed": 1,
+    "loser": "Virginia",
+    "loser_seed": 4,
+    "winner_prob": 0.6639
+  },
+  {
+    "round": "S16",
+    "region": "South",
+    "team_a": "Louisville",
+    "seed_a": 6,
+    "team_b": "Houston",
+    "seed_b": 2,
+    "prob_a": 0.2945,
+    "winner": "Houston",
+    "winner_seed": 2,
+    "loser": "Louisville",
+    "loser_seed": 6,
+    "winner_prob": 0.7055
+  },
+  {
+    "round": "S16",
+    "region": "West",
+    "team_a": "Arizona",
+    "seed_a": 1,
+    "team_b": "Gonzaga",
+    "seed_b": 4,
+    "prob_a": 0.7833,
+    "winner": "Arizona",
+    "winner_seed": 1,
+    "loser": "Gonzaga",
+    "loser_seed": 4,
+    "winner_prob": 0.7833
+  },
+  {
+    "round": "S16",
+    "region": "West",
+    "team_a": "Alabama",
+    "seed_a": 3,
+    "team_b": "Illinois",
+    "seed_b": 2,
+    "prob_a": 0.3789,
+    "winner": "Illinois",
+    "winner_seed": 2,
+    "loser": "Alabama",
+    "loser_seed": 3,
+    "winner_prob": 0.6211
+  },
+  {
+    "round": "E8",
+    "region": "East",
+    "team_a": "Duke",
+    "seed_a": 1,
+    "team_b": "Tennessee",
+    "seed_b": 6,
+    "prob_a": 0.6776,
+    "winner": "Duke",
+    "winner_seed": 1,
+    "loser": "Tennessee",
+    "loser_seed": 6,
+    "winner_prob": 0.6776
+  },
+  {
+    "round": "E8",
+    "region": "Midwest",
+    "team_a": "Michigan",
+    "seed_a": 1,
+    "team_b": "Uconn",
+    "seed_b": 2,
+    "prob_a": 0.7969,
+    "winner": "Michigan",
+    "winner_seed": 1,
+    "loser": "Uconn",
+    "loser_seed": 2,
+    "winner_prob": 0.7969
+  },
+  {
+    "round": "E8",
+    "region": "South",
+    "team_a": "Florida",
+    "seed_a": 1,
+    "team_b": "Houston",
+    "seed_b": 2,
+    "prob_a": 0.5117,
+    "winner": "Florida",
+    "winner_seed": 1,
+    "loser": "Houston",
+    "loser_seed": 2,
+    "winner_prob": 0.5117
+  },
+  {
+    "round": "E8",
+    "region": "West",
+    "team_a": "Arizona",
+    "seed_a": 1,
+    "team_b": "Illinois",
+    "seed_b": 2,
+    "prob_a": 0.5497,
+    "winner": "Arizona",
+    "winner_seed": 1,
+    "loser": "Illinois",
+    "loser_seed": 2,
+    "winner_prob": 0.5497
+  },
+  {
+    "round": "F4",
+    "region": "Final",
+    "team_a": "Duke",
+    "seed_a": 1,
+    "team_b": "Arizona",
+    "seed_b": 1,
+    "prob_a": 0.506,
+    "winner": "Duke",
+    "winner_seed": 1,
+    "loser": "Arizona",
+    "loser_seed": 1,
+    "winner_prob": 0.506
+  },
+  {
+    "round": "F4",
+    "region": "Final",
+    "team_a": "Michigan",
+    "seed_a": 1,
+    "team_b": "Florida",
+    "seed_b": 1,
+    "prob_a": 0.7002,
+    "winner": "Michigan",
+    "winner_seed": 1,
+    "loser": "Florida",
+    "loser_seed": 1,
+    "winner_prob": 0.7002
+  },
+  {
+    "round": "Championship",
+    "region": "Final",
+    "team_a": "Duke",
+    "seed_a": 1,
+    "team_b": "Michigan",
+    "seed_b": 1,
+    "prob_a": 0.3613,
+    "winner": "Michigan",
+    "winner_seed": 1,
+    "loser": "Duke",
+    "loser_seed": 1,
+    "winner_prob": 0.6387
+  }
+];
+const MC_DATA       = [
+  {
+    "team": "Duke",
+    "seed": 1,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.9957,
+    "S16": 0.7166,
+    "E8": 0.4662,
+    "F4": 0.3496,
+    "Championship": 0.2062,
+    "Winner": 0.1057
+  },
+  {
+    "team": "Michigan St.",
+    "seed": 2,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.8811,
+    "S16": 0.5437,
+    "E8": 0.1925,
+    "F4": 0.0498,
+    "Championship": 0.0113,
+    "Winner": 0.0031
+  },
+  {
+    "team": "Iowa State",
+    "seed": 3,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.9473,
+    "S16": 0.4991,
+    "E8": 0.3452,
+    "F4": 0.1281,
+    "Championship": 0.0488,
+    "Winner": 0.016
+  },
+  {
+    "team": "Texas Tech",
+    "seed": 4,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.975,
+    "S16": 0.522,
+    "E8": 0.2171,
+    "F4": 0.129,
+    "Championship": 0.0588,
+    "Winner": 0.0207
+  },
+  {
+    "team": "Arkansas",
+    "seed": 5,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.8675,
+    "S16": 0.4552,
+    "E8": 0.1929,
+    "F4": 0.1235,
+    "Championship": 0.0547,
+    "Winner": 0.0241
+  },
+  {
+    "team": "Tennessee",
+    "seed": 6,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.7803,
+    "S16": 0.4344,
+    "E8": 0.3091,
+    "F4": 0.1242,
+    "Championship": 0.0486,
+    "Winner": 0.0189
+  },
+  {
+    "team": "Villanova",
+    "seed": 7,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.8286,
+    "S16": 0.402,
+    "E8": 0.1198,
+    "F4": 0.0237,
+    "Championship": 0.0045,
+    "Winner": 0.0006
+  },
+  {
+    "team": "Georgia",
+    "seed": 8,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.3546,
+    "S16": 0.0758,
+    "E8": 0.0264,
+    "F4": 0.0121,
+    "Championship": 0.0033,
+    "Winner": 0.0012
+  },
+  {
+    "team": "Ohio State",
+    "seed": 9,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.6454,
+    "S16": 0.2075,
+    "E8": 0.0955,
+    "F4": 0.056,
+    "Championship": 0.0237,
+    "Winner": 0.0091
+  },
+  {
+    "team": "Miami (OH)",
+    "seed": 10,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.1714,
+    "S16": 0.0291,
+    "E8": 0.0025,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "SMU",
+    "seed": 11,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.2197,
+    "S16": 0.0636,
+    "E8": 0.0282,
+    "F4": 0.0035,
+    "Championship": 0.0009,
+    "Winner": 0.0002
+  },
+  {
+    "team": "South Florida",
+    "seed": 12,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.1325,
+    "S16": 0.0218,
+    "E8": 0.0019,
+    "F4": 0.0004,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Monmouth",
+    "seed": 13,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.025,
+    "S16": 0.001,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "North Dakota State",
+    "seed": 14,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.0527,
+    "S16": 0.0029,
+    "E8": 0.0003,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Wright St.",
+    "seed": 15,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.1189,
+    "S16": 0.0252,
+    "E8": 0.0024,
+    "F4": 0.0001,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Lehigh",
+    "seed": 16,
+    "region": "East",
+    "R64": 1.0,
+    "R32": 0.0043,
+    "S16": 0.0001,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Michigan",
+    "seed": 1,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.9955,
+    "S16": 0.9043,
+    "E8": 0.7149,
+    "F4": 0.5859,
+    "Championship": 0.4389,
+    "Winner": 0.3173
+  },
+  {
+    "team": "Uconn",
+    "seed": 2,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.9779,
+    "S16": 0.7366,
+    "E8": 0.4361,
+    "F4": 0.1239,
+    "Championship": 0.0565,
+    "Winner": 0.0227
+  },
+  {
+    "team": "Purdue",
+    "seed": 3,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.9235,
+    "S16": 0.6577,
+    "E8": 0.3652,
+    "F4": 0.1027,
+    "Championship": 0.046,
+    "Winner": 0.0188
+  },
+  {
+    "team": "Kansas",
+    "seed": 4,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.8061,
+    "S16": 0.3531,
+    "E8": 0.0803,
+    "F4": 0.0412,
+    "Championship": 0.0168,
+    "Winner": 0.0059
+  },
+  {
+    "team": "Vanderbilt",
+    "seed": 5,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.9311,
+    "S16": 0.6062,
+    "E8": 0.1707,
+    "F4": 0.1025,
+    "Championship": 0.0524,
+    "Winner": 0.0228
+  },
+  {
+    "team": "North Carolina",
+    "seed": 6,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.5014,
+    "S16": 0.1589,
+    "E8": 0.0547,
+    "F4": 0.009,
+    "Championship": 0.0024,
+    "Winner": 0.0002
+  },
+  {
+    "team": "Kentucky",
+    "seed": 7,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.6,
+    "S16": 0.177,
+    "E8": 0.0635,
+    "F4": 0.0102,
+    "Championship": 0.002,
+    "Winner": 0.0005
+  },
+  {
+    "team": "Clemson",
+    "seed": 8,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.7511,
+    "S16": 0.085,
+    "E8": 0.03,
+    "F4": 0.0119,
+    "Championship": 0.0048,
+    "Winner": 0.0012
+  },
+  {
+    "team": "TCU",
+    "seed": 9,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.2489,
+    "S16": 0.0105,
+    "E8": 0.0015,
+    "F4": 0.0002,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "UCF",
+    "seed": 10,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.4,
+    "S16": 0.085,
+    "E8": 0.0236,
+    "F4": 0.0032,
+    "Championship": 0.0001,
+    "Winner": 0.0
+  },
+  {
+    "team": "Texas",
+    "seed": 11,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.4986,
+    "S16": 0.1717,
+    "E8": 0.0554,
+    "F4": 0.0086,
+    "Championship": 0.0023,
+    "Winner": 0.0004
+  },
+  {
+    "team": "Yale",
+    "seed": 12,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.0689,
+    "S16": 0.0087,
+    "E8": 0.0004,
+    "F4": 0.0001,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Stephen F. Austin",
+    "seed": 13,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.1939,
+    "S16": 0.032,
+    "E8": 0.0022,
+    "F4": 0.0006,
+    "Championship": 0.0001,
+    "Winner": 0.0
+  },
+  {
+    "team": "Merrimack",
+    "seed": 14,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.0765,
+    "S16": 0.0117,
+    "E8": 0.0015,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Queens",
+    "seed": 15,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.0221,
+    "S16": 0.0014,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "LIU",
+    "seed": 16,
+    "region": "Midwest",
+    "R64": 1.0,
+    "R32": 0.0045,
+    "S16": 0.0002,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Florida",
+    "seed": 1,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.9875,
+    "S16": 0.7929,
+    "E8": 0.5445,
+    "F4": 0.3207,
+    "Championship": 0.1456,
+    "Winner": 0.0735
+  },
+  {
+    "team": "Houston",
+    "seed": 2,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.9889,
+    "S16": 0.8223,
+    "E8": 0.5902,
+    "F4": 0.3504,
+    "Championship": 0.1458,
+    "Winner": 0.0726
+  },
+  {
+    "team": "Nebraska",
+    "seed": 3,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.9253,
+    "S16": 0.5194,
+    "E8": 0.1884,
+    "F4": 0.0727,
+    "Championship": 0.017,
+    "Winner": 0.0055
+  },
+  {
+    "team": "Virginia",
+    "seed": 4,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.8267,
+    "S16": 0.4653,
+    "E8": 0.1888,
+    "F4": 0.0814,
+    "Championship": 0.0256,
+    "Winner": 0.01
+  },
+  {
+    "team": "St. John's",
+    "seed": 5,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.8806,
+    "S16": 0.4745,
+    "E8": 0.1826,
+    "F4": 0.0789,
+    "Championship": 0.0224,
+    "Winner": 0.0067
+  },
+  {
+    "team": "Louisville",
+    "seed": 6,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.7006,
+    "S16": 0.3723,
+    "E8": 0.136,
+    "F4": 0.0512,
+    "Championship": 0.0123,
+    "Winner": 0.0035
+  },
+  {
+    "team": "Saint Mary's",
+    "seed": 7,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.4453,
+    "S16": 0.0707,
+    "E8": 0.0246,
+    "F4": 0.006,
+    "Championship": 0.0008,
+    "Winner": 0.0
+  },
+  {
+    "team": "Utah St.",
+    "seed": 8,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.4208,
+    "S16": 0.0751,
+    "E8": 0.0252,
+    "F4": 0.007,
+    "Championship": 0.0012,
+    "Winner": 0.0001
+  },
+  {
+    "team": "Iowa",
+    "seed": 9,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.5792,
+    "S16": 0.1317,
+    "E8": 0.0529,
+    "F4": 0.0154,
+    "Championship": 0.0035,
+    "Winner": 0.001
+  },
+  {
+    "team": "N.C. State",
+    "seed": 10,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.5547,
+    "S16": 0.1067,
+    "E8": 0.0401,
+    "F4": 0.0108,
+    "Championship": 0.0022,
+    "Winner": 0.0007
+  },
+  {
+    "team": "Missouri",
+    "seed": 11,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.2994,
+    "S16": 0.1009,
+    "E8": 0.0204,
+    "F4": 0.0047,
+    "Championship": 0.0011,
+    "Winner": 0.0001
+  },
+  {
+    "team": "High Point",
+    "seed": 12,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.1194,
+    "S16": 0.0196,
+    "E8": 0.0012,
+    "F4": 0.0002,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Northern Iowa",
+    "seed": 13,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.1733,
+    "S16": 0.0406,
+    "E8": 0.0048,
+    "F4": 0.0006,
+    "Championship": 0.0002,
+    "Winner": 0.0
+  },
+  {
+    "team": "UC Irvine",
+    "seed": 14,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.0747,
+    "S16": 0.0074,
+    "E8": 0.0003,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Tennessee St.",
+    "seed": 15,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.0111,
+    "S16": 0.0003,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Furman",
+    "seed": 16,
+    "region": "South",
+    "R64": 1.0,
+    "R32": 0.0125,
+    "S16": 0.0003,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Arizona",
+    "seed": 1,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.9892,
+    "S16": 0.7053,
+    "E8": 0.5607,
+    "F4": 0.3448,
+    "Championship": 0.2164,
+    "Winner": 0.1097
+  },
+  {
+    "team": "Illinois",
+    "seed": 2,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.9832,
+    "S16": 0.8666,
+    "E8": 0.5897,
+    "F4": 0.3342,
+    "Championship": 0.1949,
+    "Winner": 0.0892
+  },
+  {
+    "team": "Alabama",
+    "seed": 3,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.9558,
+    "S16": 0.7602,
+    "E8": 0.333,
+    "F4": 0.1495,
+    "Championship": 0.0686,
+    "Winner": 0.0224
+  },
+  {
+    "team": "Gonzaga",
+    "seed": 4,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.9233,
+    "S16": 0.4948,
+    "E8": 0.1285,
+    "F4": 0.0423,
+    "Championship": 0.0146,
+    "Winner": 0.0031
+  },
+  {
+    "team": "Wisconsin",
+    "seed": 5,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.9117,
+    "S16": 0.4864,
+    "E8": 0.1326,
+    "F4": 0.0453,
+    "Championship": 0.0149,
+    "Winner": 0.0044
+  },
+  {
+    "team": "BYU",
+    "seed": 6,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.3559,
+    "S16": 0.0616,
+    "E8": 0.0083,
+    "F4": 0.0014,
+    "Championship": 0.0002,
+    "Winner": 0.0001
+  },
+  {
+    "team": "Miami",
+    "seed": 7,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.4586,
+    "S16": 0.0571,
+    "E8": 0.0142,
+    "F4": 0.002,
+    "Championship": 0.0003,
+    "Winner": 0.0001
+  },
+  {
+    "team": "UCLA",
+    "seed": 8,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.5686,
+    "S16": 0.1848,
+    "E8": 0.1156,
+    "F4": 0.0464,
+    "Championship": 0.0192,
+    "Winner": 0.0052
+  },
+  {
+    "team": "Texas A&M",
+    "seed": 9,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.4314,
+    "S16": 0.1095,
+    "E8": 0.0618,
+    "F4": 0.0222,
+    "Championship": 0.0079,
+    "Winner": 0.0024
+  },
+  {
+    "team": "Saint Louis",
+    "seed": 10,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.5414,
+    "S16": 0.0745,
+    "E8": 0.0167,
+    "F4": 0.0028,
+    "Championship": 0.0003,
+    "Winner": 0.0
+  },
+  {
+    "team": "Santa Clara",
+    "seed": 11,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.6441,
+    "S16": 0.1695,
+    "E8": 0.0377,
+    "F4": 0.009,
+    "Championship": 0.0019,
+    "Winner": 0.0003
+  },
+  {
+    "team": "Liberty",
+    "seed": 12,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.0883,
+    "S16": 0.0116,
+    "E8": 0.0004,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Utah Valley",
+    "seed": 13,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.0767,
+    "S16": 0.0072,
+    "E8": 0.0003,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Troy",
+    "seed": 14,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.0442,
+    "S16": 0.0087,
+    "E8": 0.0004,
+    "F4": 0.0001,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "Portland St.",
+    "seed": 15,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.0168,
+    "S16": 0.0018,
+    "E8": 0.0,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  },
+  {
+    "team": "UMBC",
+    "seed": 16,
+    "region": "West",
+    "R64": 1.0,
+    "R32": 0.0108,
+    "S16": 0.0004,
+    "E8": 0.0001,
+    "F4": 0.0,
+    "Championship": 0.0,
+    "Winner": 0.0
+  }
+];
+const BRACKET       = {
+  "East": {
+    "R64": [
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Duke",
+        "seed_a": 1,
+        "team_b": "Lehigh",
+        "seed_b": 16,
+        "prob_a": 0.9961,
+        "winner": "Duke",
+        "winner_seed": 1,
+        "loser": "Lehigh",
+        "loser_seed": 16,
+        "winner_prob": 0.9961
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Georgia",
+        "seed_a": 8,
+        "team_b": "Ohio State",
+        "seed_b": 9,
+        "prob_a": 0.3543,
+        "winner": "Ohio State",
+        "winner_seed": 9,
+        "loser": "Georgia",
+        "loser_seed": 8,
+        "winner_prob": 0.6457
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Arkansas",
+        "seed_a": 5,
+        "team_b": "South Florida",
+        "seed_b": 12,
+        "prob_a": 0.8669,
+        "winner": "Arkansas",
+        "winner_seed": 5,
+        "loser": "South Florida",
+        "loser_seed": 12,
+        "winner_prob": 0.8669
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Texas Tech",
+        "seed_a": 4,
+        "team_b": "Monmouth",
+        "seed_b": 13,
+        "prob_a": 0.9757,
+        "winner": "Texas Tech",
+        "winner_seed": 4,
+        "loser": "Monmouth",
+        "loser_seed": 13,
+        "winner_prob": 0.9757
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Tennessee",
+        "seed_a": 6,
+        "team_b": "SMU",
+        "seed_b": 11,
+        "prob_a": 0.7738,
+        "winner": "Tennessee",
+        "winner_seed": 6,
+        "loser": "SMU",
+        "loser_seed": 11,
+        "winner_prob": 0.7738
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Iowa State",
+        "seed_a": 3,
+        "team_b": "North Dakota State",
+        "seed_b": 14,
+        "prob_a": 0.9473,
+        "winner": "Iowa State",
+        "winner_seed": 3,
+        "loser": "North Dakota State",
+        "loser_seed": 14,
+        "winner_prob": 0.9473
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Villanova",
+        "seed_a": 7,
+        "team_b": "Miami (OH)",
+        "seed_b": 10,
+        "prob_a": 0.8302,
+        "winner": "Villanova",
+        "winner_seed": 7,
+        "loser": "Miami (OH)",
+        "loser_seed": 10,
+        "winner_prob": 0.8302
+      },
+      {
+        "round": "R64",
+        "region": "East",
+        "team_a": "Michigan St.",
+        "seed_a": 2,
+        "team_b": "Wright St.",
+        "seed_b": 15,
+        "prob_a": 0.8821,
+        "winner": "Michigan St.",
+        "winner_seed": 2,
+        "loser": "Wright St.",
+        "loser_seed": 15,
+        "winner_prob": 0.8821
+      }
+    ],
+    "R32": [
+      {
+        "round": "R32",
+        "region": "East",
+        "team_a": "Duke",
+        "seed_a": 1,
+        "team_b": "Ohio State",
+        "seed_b": 9,
+        "prob_a": 0.6782,
+        "winner": "Duke",
+        "winner_seed": 1,
+        "loser": "Ohio State",
+        "loser_seed": 9,
+        "winner_prob": 0.6782
+      },
+      {
+        "round": "R32",
+        "region": "East",
+        "team_a": "Arkansas",
+        "seed_a": 5,
+        "team_b": "Texas Tech",
+        "seed_b": 4,
+        "prob_a": 0.5158,
+        "winner": "Arkansas",
+        "winner_seed": 5,
+        "loser": "Texas Tech",
+        "loser_seed": 4,
+        "winner_prob": 0.5158
+      },
+      {
+        "round": "R32",
+        "region": "East",
+        "team_a": "Tennessee",
+        "seed_a": 6,
+        "team_b": "Iowa State",
+        "seed_b": 3,
+        "prob_a": 0.5351,
+        "winner": "Tennessee",
+        "winner_seed": 6,
+        "loser": "Iowa State",
+        "loser_seed": 3,
+        "winner_prob": 0.5351
+      },
+      {
+        "round": "R32",
+        "region": "East",
+        "team_a": "Villanova",
+        "seed_a": 7,
+        "team_b": "Michigan St.",
+        "seed_b": 2,
+        "prob_a": 0.4331,
+        "winner": "Michigan St.",
+        "winner_seed": 2,
+        "loser": "Villanova",
+        "loser_seed": 7,
+        "winner_prob": 0.5669
+      }
+    ],
+    "S16": [
+      {
+        "round": "S16",
+        "region": "East",
+        "team_a": "Duke",
+        "seed_a": 1,
+        "team_b": "Arkansas",
+        "seed_b": 5,
+        "prob_a": 0.6376,
+        "winner": "Duke",
+        "winner_seed": 1,
+        "loser": "Arkansas",
+        "loser_seed": 5,
+        "winner_prob": 0.6376
+      },
+      {
+        "round": "S16",
+        "region": "East",
+        "team_a": "Tennessee",
+        "seed_a": 6,
+        "team_b": "Michigan St.",
+        "seed_b": 2,
+        "prob_a": 0.6813,
+        "winner": "Tennessee",
+        "winner_seed": 6,
+        "loser": "Michigan St.",
+        "loser_seed": 2,
+        "winner_prob": 0.6813
+      }
+    ],
+    "E8": [
+      {
+        "round": "E8",
+        "region": "East",
+        "team_a": "Duke",
+        "seed_a": 1,
+        "team_b": "Tennessee",
+        "seed_b": 6,
+        "prob_a": 0.6776,
+        "winner": "Duke",
+        "winner_seed": 1,
+        "loser": "Tennessee",
+        "loser_seed": 6,
+        "winner_prob": 0.6776
+      }
+    ]
+  },
+  "Midwest": {
+    "R64": [
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Michigan",
+        "seed_a": 1,
+        "team_b": "LIU",
+        "seed_b": 16,
+        "prob_a": 0.9954,
+        "winner": "Michigan",
+        "winner_seed": 1,
+        "loser": "LIU",
+        "loser_seed": 16,
+        "winner_prob": 0.9954
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Clemson",
+        "seed_a": 8,
+        "team_b": "TCU",
+        "seed_b": 9,
+        "prob_a": 0.7552,
+        "winner": "Clemson",
+        "winner_seed": 8,
+        "loser": "TCU",
+        "loser_seed": 9,
+        "winner_prob": 0.7552
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Vanderbilt",
+        "seed_a": 5,
+        "team_b": "Yale",
+        "seed_b": 12,
+        "prob_a": 0.9302,
+        "winner": "Vanderbilt",
+        "winner_seed": 5,
+        "loser": "Yale",
+        "loser_seed": 12,
+        "winner_prob": 0.9302
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Kansas",
+        "seed_a": 4,
+        "team_b": "Stephen F. Austin",
+        "seed_b": 13,
+        "prob_a": 0.8066,
+        "winner": "Kansas",
+        "winner_seed": 4,
+        "loser": "Stephen F. Austin",
+        "loser_seed": 13,
+        "winner_prob": 0.8066
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "North Carolina",
+        "seed_a": 6,
+        "team_b": "Texas",
+        "seed_b": 11,
+        "prob_a": 0.4937,
+        "winner": "Texas",
+        "winner_seed": 11,
+        "loser": "North Carolina",
+        "loser_seed": 6,
+        "winner_prob": 0.5063
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Purdue",
+        "seed_a": 3,
+        "team_b": "Merrimack",
+        "seed_b": 14,
+        "prob_a": 0.9244,
+        "winner": "Purdue",
+        "winner_seed": 3,
+        "loser": "Merrimack",
+        "loser_seed": 14,
+        "winner_prob": 0.9244
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Kentucky",
+        "seed_a": 7,
+        "team_b": "UCF",
+        "seed_b": 10,
+        "prob_a": 0.5993,
+        "winner": "Kentucky",
+        "winner_seed": 7,
+        "loser": "UCF",
+        "loser_seed": 10,
+        "winner_prob": 0.5993
+      },
+      {
+        "round": "R64",
+        "region": "Midwest",
+        "team_a": "Uconn",
+        "seed_a": 2,
+        "team_b": "Queens",
+        "seed_b": 15,
+        "prob_a": 0.9765,
+        "winner": "Uconn",
+        "winner_seed": 2,
+        "loser": "Queens",
+        "loser_seed": 15,
+        "winner_prob": 0.9765
+      }
+    ],
+    "R32": [
+      {
+        "round": "R32",
+        "region": "Midwest",
+        "team_a": "Michigan",
+        "seed_a": 1,
+        "team_b": "Clemson",
+        "seed_b": 8,
+        "prob_a": 0.8881,
+        "winner": "Michigan",
+        "winner_seed": 1,
+        "loser": "Clemson",
+        "loser_seed": 8,
+        "winner_prob": 0.8881
+      },
+      {
+        "round": "R32",
+        "region": "Midwest",
+        "team_a": "Vanderbilt",
+        "seed_a": 5,
+        "team_b": "Kansas",
+        "seed_b": 4,
+        "prob_a": 0.601,
+        "winner": "Vanderbilt",
+        "winner_seed": 5,
+        "loser": "Kansas",
+        "loser_seed": 4,
+        "winner_prob": 0.601
+      },
+      {
+        "round": "R32",
+        "region": "Midwest",
+        "team_a": "Texas",
+        "seed_a": 11,
+        "team_b": "Purdue",
+        "seed_b": 3,
+        "prob_a": 0.2917,
+        "winner": "Purdue",
+        "winner_seed": 3,
+        "loser": "Texas",
+        "loser_seed": 11,
+        "winner_prob": 0.7083
+      },
+      {
+        "round": "R32",
+        "region": "Midwest",
+        "team_a": "Kentucky",
+        "seed_a": 7,
+        "team_b": "Uconn",
+        "seed_b": 2,
+        "prob_a": 0.2784,
+        "winner": "Uconn",
+        "winner_seed": 2,
+        "loser": "Kentucky",
+        "loser_seed": 7,
+        "winner_prob": 0.7216
+      }
+    ],
+    "S16": [
+      {
+        "round": "S16",
+        "region": "Midwest",
+        "team_a": "Michigan",
+        "seed_a": 1,
+        "team_b": "Vanderbilt",
+        "seed_b": 5,
+        "prob_a": 0.7598,
+        "winner": "Michigan",
+        "winner_seed": 1,
+        "loser": "Vanderbilt",
+        "loser_seed": 5,
+        "winner_prob": 0.7598
+      },
+      {
+        "round": "S16",
+        "region": "Midwest",
+        "team_a": "Purdue",
+        "seed_a": 3,
+        "team_b": "Uconn",
+        "seed_b": 2,
+        "prob_a": 0.4861,
+        "winner": "Uconn",
+        "winner_seed": 2,
+        "loser": "Purdue",
+        "loser_seed": 3,
+        "winner_prob": 0.5139
+      }
+    ],
+    "E8": [
+      {
+        "round": "E8",
+        "region": "Midwest",
+        "team_a": "Michigan",
+        "seed_a": 1,
+        "team_b": "Uconn",
+        "seed_b": 2,
+        "prob_a": 0.7969,
+        "winner": "Michigan",
+        "winner_seed": 1,
+        "loser": "Uconn",
+        "loser_seed": 2,
+        "winner_prob": 0.7969
+      }
+    ]
+  },
+  "South": {
+    "R64": [
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Florida",
+        "seed_a": 1,
+        "team_b": "Furman",
+        "seed_b": 16,
+        "prob_a": 0.9868,
+        "winner": "Florida",
+        "winner_seed": 1,
+        "loser": "Furman",
+        "loser_seed": 16,
+        "winner_prob": 0.9868
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Utah St.",
+        "seed_a": 8,
+        "team_b": "Iowa",
+        "seed_b": 9,
+        "prob_a": 0.4249,
+        "winner": "Iowa",
+        "winner_seed": 9,
+        "loser": "Utah St.",
+        "loser_seed": 8,
+        "winner_prob": 0.5751
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "St. John's",
+        "seed_a": 5,
+        "team_b": "High Point",
+        "seed_b": 12,
+        "prob_a": 0.8774,
+        "winner": "St. John's",
+        "winner_seed": 5,
+        "loser": "High Point",
+        "loser_seed": 12,
+        "winner_prob": 0.8774
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Virginia",
+        "seed_a": 4,
+        "team_b": "Northern Iowa",
+        "seed_b": 13,
+        "prob_a": 0.8264,
+        "winner": "Virginia",
+        "winner_seed": 4,
+        "loser": "Northern Iowa",
+        "loser_seed": 13,
+        "winner_prob": 0.8264
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Louisville",
+        "seed_a": 6,
+        "team_b": "Missouri",
+        "seed_b": 11,
+        "prob_a": 0.6939,
+        "winner": "Louisville",
+        "winner_seed": 6,
+        "loser": "Missouri",
+        "loser_seed": 11,
+        "winner_prob": 0.6939
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Nebraska",
+        "seed_a": 3,
+        "team_b": "UC Irvine",
+        "seed_b": 14,
+        "prob_a": 0.9285,
+        "winner": "Nebraska",
+        "winner_seed": 3,
+        "loser": "UC Irvine",
+        "loser_seed": 14,
+        "winner_prob": 0.9285
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Saint Mary's",
+        "seed_a": 7,
+        "team_b": "N.C. State",
+        "seed_b": 10,
+        "prob_a": 0.439,
+        "winner": "N.C. State",
+        "winner_seed": 10,
+        "loser": "Saint Mary's",
+        "loser_seed": 7,
+        "winner_prob": 0.561
+      },
+      {
+        "round": "R64",
+        "region": "South",
+        "team_a": "Houston",
+        "seed_a": 2,
+        "team_b": "Tennessee St.",
+        "seed_b": 15,
+        "prob_a": 0.9893,
+        "winner": "Houston",
+        "winner_seed": 2,
+        "loser": "Tennessee St.",
+        "loser_seed": 15,
+        "winner_prob": 0.9893
+      }
+    ],
+    "R32": [
+      {
+        "round": "R32",
+        "region": "South",
+        "team_a": "Florida",
+        "seed_a": 1,
+        "team_b": "Iowa",
+        "seed_b": 9,
+        "prob_a": 0.7757,
+        "winner": "Florida",
+        "winner_seed": 1,
+        "loser": "Iowa",
+        "loser_seed": 9,
+        "winner_prob": 0.7757
+      },
+      {
+        "round": "R32",
+        "region": "South",
+        "team_a": "St. John's",
+        "seed_a": 5,
+        "team_b": "Virginia",
+        "seed_b": 4,
+        "prob_a": 0.4804,
+        "winner": "Virginia",
+        "winner_seed": 4,
+        "loser": "St. John's",
+        "loser_seed": 5,
+        "winner_prob": 0.5196
+      },
+      {
+        "round": "R32",
+        "region": "South",
+        "team_a": "Louisville",
+        "seed_a": 6,
+        "team_b": "Nebraska",
+        "seed_b": 3,
+        "prob_a": 0.5009,
+        "winner": "Louisville",
+        "winner_seed": 6,
+        "loser": "Nebraska",
+        "loser_seed": 3,
+        "winner_prob": 0.5009
+      },
+      {
+        "round": "R32",
+        "region": "South",
+        "team_a": "N.C. State",
+        "seed_a": 10,
+        "team_b": "Houston",
+        "seed_b": 2,
+        "prob_a": 0.1801,
+        "winner": "Houston",
+        "winner_seed": 2,
+        "loser": "N.C. State",
+        "loser_seed": 10,
+        "winner_prob": 0.8199
+      }
+    ],
+    "S16": [
+      {
+        "round": "S16",
+        "region": "South",
+        "team_a": "Florida",
+        "seed_a": 1,
+        "team_b": "Virginia",
+        "seed_b": 4,
+        "prob_a": 0.6639,
+        "winner": "Florida",
+        "winner_seed": 1,
+        "loser": "Virginia",
+        "loser_seed": 4,
+        "winner_prob": 0.6639
+      },
+      {
+        "round": "S16",
+        "region": "South",
+        "team_a": "Louisville",
+        "seed_a": 6,
+        "team_b": "Houston",
+        "seed_b": 2,
+        "prob_a": 0.2945,
+        "winner": "Houston",
+        "winner_seed": 2,
+        "loser": "Louisville",
+        "loser_seed": 6,
+        "winner_prob": 0.7055
+      }
+    ],
+    "E8": [
+      {
+        "round": "E8",
+        "region": "South",
+        "team_a": "Florida",
+        "seed_a": 1,
+        "team_b": "Houston",
+        "seed_b": 2,
+        "prob_a": 0.5117,
+        "winner": "Florida",
+        "winner_seed": 1,
+        "loser": "Houston",
+        "loser_seed": 2,
+        "winner_prob": 0.5117
+      }
+    ]
+  },
+  "West": {
+    "R64": [
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "Arizona",
+        "seed_a": 1,
+        "team_b": "UMBC",
+        "seed_b": 16,
+        "prob_a": 0.99,
+        "winner": "Arizona",
+        "winner_seed": 1,
+        "loser": "UMBC",
+        "loser_seed": 16,
+        "winner_prob": 0.99
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "UCLA",
+        "seed_a": 8,
+        "team_b": "Texas A&M",
+        "seed_b": 9,
+        "prob_a": 0.5652,
+        "winner": "UCLA",
+        "winner_seed": 8,
+        "loser": "Texas A&M",
+        "loser_seed": 9,
+        "winner_prob": 0.5652
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "Wisconsin",
+        "seed_a": 5,
+        "team_b": "Liberty",
+        "seed_b": 12,
+        "prob_a": 0.9113,
+        "winner": "Wisconsin",
+        "winner_seed": 5,
+        "loser": "Liberty",
+        "loser_seed": 12,
+        "winner_prob": 0.9113
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "Gonzaga",
+        "seed_a": 4,
+        "team_b": "Utah Valley",
+        "seed_b": 13,
+        "prob_a": 0.924,
+        "winner": "Gonzaga",
+        "winner_seed": 4,
+        "loser": "Utah Valley",
+        "loser_seed": 13,
+        "winner_prob": 0.924
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "BYU",
+        "seed_a": 6,
+        "team_b": "Santa Clara",
+        "seed_b": 11,
+        "prob_a": 0.3641,
+        "winner": "Santa Clara",
+        "winner_seed": 11,
+        "loser": "BYU",
+        "loser_seed": 6,
+        "winner_prob": 0.6359
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "Alabama",
+        "seed_a": 3,
+        "team_b": "Troy",
+        "seed_b": 14,
+        "prob_a": 0.9571,
+        "winner": "Alabama",
+        "winner_seed": 3,
+        "loser": "Troy",
+        "loser_seed": 14,
+        "winner_prob": 0.9571
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "Miami",
+        "seed_a": 7,
+        "team_b": "Saint Louis",
+        "seed_b": 10,
+        "prob_a": 0.4621,
+        "winner": "Saint Louis",
+        "winner_seed": 10,
+        "loser": "Miami",
+        "loser_seed": 7,
+        "winner_prob": 0.5379
+      },
+      {
+        "round": "R64",
+        "region": "West",
+        "team_a": "Illinois",
+        "seed_a": 2,
+        "team_b": "Portland St.",
+        "seed_b": 15,
+        "prob_a": 0.9833,
+        "winner": "Illinois",
+        "winner_seed": 2,
+        "loser": "Portland St.",
+        "loser_seed": 15,
+        "winner_prob": 0.9833
+      }
+    ],
+    "R32": [
+      {
+        "round": "R32",
+        "region": "West",
+        "team_a": "Arizona",
+        "seed_a": 1,
+        "team_b": "UCLA",
+        "seed_b": 8,
+        "prob_a": 0.6951,
+        "winner": "Arizona",
+        "winner_seed": 1,
+        "loser": "UCLA",
+        "loser_seed": 8,
+        "winner_prob": 0.6951
+      },
+      {
+        "round": "R32",
+        "region": "West",
+        "team_a": "Wisconsin",
+        "seed_a": 5,
+        "team_b": "Gonzaga",
+        "seed_b": 4,
+        "prob_a": 0.4982,
+        "winner": "Gonzaga",
+        "winner_seed": 4,
+        "loser": "Wisconsin",
+        "loser_seed": 5,
+        "winner_prob": 0.5018
+      },
+      {
+        "round": "R32",
+        "region": "West",
+        "team_a": "Santa Clara",
+        "seed_a": 11,
+        "team_b": "Alabama",
+        "seed_b": 3,
+        "prob_a": 0.2331,
+        "winner": "Alabama",
+        "winner_seed": 3,
+        "loser": "Santa Clara",
+        "loser_seed": 11,
+        "winner_prob": 0.7669
+      },
+      {
+        "round": "R32",
+        "region": "West",
+        "team_a": "Saint Louis",
+        "seed_a": 10,
+        "team_b": "Illinois",
+        "seed_b": 2,
+        "prob_a": 0.1229,
+        "winner": "Illinois",
+        "winner_seed": 2,
+        "loser": "Saint Louis",
+        "loser_seed": 10,
+        "winner_prob": 0.8771
+      }
+    ],
+    "S16": [
+      {
+        "round": "S16",
+        "region": "West",
+        "team_a": "Arizona",
+        "seed_a": 1,
+        "team_b": "Gonzaga",
+        "seed_b": 4,
+        "prob_a": 0.7833,
+        "winner": "Arizona",
+        "winner_seed": 1,
+        "loser": "Gonzaga",
+        "loser_seed": 4,
+        "winner_prob": 0.7833
+      },
+      {
+        "round": "S16",
+        "region": "West",
+        "team_a": "Alabama",
+        "seed_a": 3,
+        "team_b": "Illinois",
+        "seed_b": 2,
+        "prob_a": 0.3789,
+        "winner": "Illinois",
+        "winner_seed": 2,
+        "loser": "Alabama",
+        "loser_seed": 3,
+        "winner_prob": 0.6211
+      }
+    ],
+    "E8": [
+      {
+        "round": "E8",
+        "region": "West",
+        "team_a": "Arizona",
+        "seed_a": 1,
+        "team_b": "Illinois",
+        "seed_b": 2,
+        "prob_a": 0.5497,
+        "winner": "Arizona",
+        "winner_seed": 1,
+        "loser": "Illinois",
+        "loser_seed": 2,
+        "winner_prob": 0.5497
+      }
+    ]
+  },
+  "Final": {
+    "F4": [
+      {
+        "round": "F4",
+        "region": "Final",
+        "team_a": "Duke",
+        "seed_a": 1,
+        "team_b": "Arizona",
+        "seed_b": 1,
+        "prob_a": 0.506,
+        "winner": "Duke",
+        "winner_seed": 1,
+        "loser": "Arizona",
+        "loser_seed": 1,
+        "winner_prob": 0.506
+      },
+      {
+        "round": "F4",
+        "region": "Final",
+        "team_a": "Michigan",
+        "seed_a": 1,
+        "team_b": "Florida",
+        "seed_b": 1,
+        "prob_a": 0.7002,
+        "winner": "Michigan",
+        "winner_seed": 1,
+        "loser": "Florida",
+        "loser_seed": 1,
+        "winner_prob": 0.7002
+      }
+    ],
+    "Championship": [
+      {
+        "round": "Championship",
+        "region": "Final",
+        "team_a": "Duke",
+        "seed_a": 1,
+        "team_b": "Michigan",
+        "seed_b": 1,
+        "prob_a": 0.3613,
+        "winner": "Michigan",
+        "winner_seed": 1,
+        "loser": "Duke",
+        "loser_seed": 1,
+        "winner_prob": 0.6387
+      }
+    ]
+  }
+};
+const CHAMPION      = "Michigan";
+const REGIONS       = ["East", "Midwest", "South", "West"];
+const ANALYSIS_DATA = {
+  "path_games": [
+    {
+      "round": "R64",
+      "team": "Michigan",
+      "team_seed": 1,
+      "opponent": "LIU",
+      "opp_seed": 16,
+      "champ_prob": 0.9954,
+      "won": true,
+      "contributions": [
+        {
+          "feat": "DIFF_ADJDE",
+          "label": "Def. Efficiency Edge",
+          "raw": -18.301,
+          "contrib": 3.1163
+        },
+        {
+          "feat": "DIFF_ADJOE",
+          "label": "Off. Efficiency Edge",
+          "raw": 25.095,
+          "contrib": 2.4989
+        },
+        {
+          "feat": "DIFF_SEED",
+          "label": "Seeding Advantage",
+          "raw": -15.0,
+          "contrib": -0.7375
+        },
+        {
+          "feat": "DIFF_DRB",
+          "label": "Def. Rebound Edge",
+          "raw": -4.5,
+          "contrib": -0.378
+        },
+        {
+          "feat": "DIFF_3PR_O",
+          "label": "3-Pt Rate Off. Edge",
+          "raw": 13.2,
+          "contrib": -0.2902
+        },
+        {
+          "feat": "DIFF_FT_PCT_OPP",
+          "label": "Opp. FT% Edge",
+          "raw": 6.0,
+          "contrib": 0.283
+        },
+        {
+          "feat": "DIFF_2P_D",
+          "label": "2-Pt Defense Edge",
+          "raw": -6.7,
+          "contrib": -0.2721
+        },
+        {
+          "feat": "DIFF_EFG_D",
+          "label": "Eff. FG% Def. Edge",
+          "raw": -5.6,
+          "contrib": 0.2212
+        }
+      ],
+      "total_pos": 7.591,
+      "total_neg": -2.212
+    },
+    {
+      "round": "R32",
+      "team": "Michigan",
+      "team_seed": 1,
+      "opponent": "Clemson",
+      "opp_seed": 8,
+      "champ_prob": 0.8881,
+      "won": true,
+      "contributions": [
+        {
+          "feat": "DIFF_ADJOE",
+          "label": "Off. Efficiency Edge",
+          "raw": 13.308,
+          "contrib": 1.3252
+        },
+        {
+          "feat": "DIFF_ADJDE",
+          "label": "Def. Efficiency Edge",
+          "raw": -5.629,
+          "contrib": 0.9585
+        },
+        {
+          "feat": "DIFF_SEED",
+          "label": "Seeding Advantage",
+          "raw": -7.0,
+          "contrib": -0.3442
+        },
+        {
+          "feat": "DIFF_DRB",
+          "label": "Def. Rebound Edge",
+          "raw": 2.6,
+          "contrib": 0.2184
+        },
+        {
+          "feat": "DIFF_2P_D",
+          "label": "2-Pt Defense Edge",
+          "raw": -4.6,
+          "contrib": -0.1868
+        },
+        {
+          "feat": "DIFF_TOR",
+          "label": "Turnover Rate Edge",
+          "raw": 2.2,
+          "contrib": -0.1863
+        },
+        {
+          "feat": "DIFF_EFG_D",
+          "label": "Eff. FG% Def. Edge",
+          "raw": -4.1,
+          "contrib": 0.162
+        },
+        {
+          "feat": "DIFF_3P_D",
+          "label": "3-Pt Defense Edge",
+          "raw": -2.2,
+          "contrib": 0.1584
+        }
+      ],
+      "total_pos": 3.542,
+      "total_neg": -1.471
+    },
+    {
+      "round": "S16",
+      "team": "Michigan",
+      "team_seed": 1,
+      "opponent": "Vanderbilt",
+      "opp_seed": 5,
+      "champ_prob": 0.7598,
+      "won": true,
+      "contributions": [
+        {
+          "feat": "DIFF_ADJDE",
+          "label": "Def. Efficiency Edge",
+          "raw": -7.802,
+          "contrib": 1.3285
+        },
+        {
+          "feat": "DIFF_ADJOE",
+          "label": "Off. Efficiency Edge",
+          "raw": 3.624,
+          "contrib": 0.3609
+        },
+        {
+          "feat": "DIFF_TOR",
+          "label": "Turnover Rate Edge",
+          "raw": 3.3,
+          "contrib": -0.2795
+        },
+        {
+          "feat": "DIFF_2P_D",
+          "label": "2-Pt Defense Edge",
+          "raw": -5.3,
+          "contrib": -0.2153
+        },
+        {
+          "feat": "DIFF_SEED",
+          "label": "Seeding Advantage",
+          "raw": -4.0,
+          "contrib": -0.1967
+        },
+        {
+          "feat": "DIFF_PPP_D",
+          "label": "Pts/Poss Def. Edge",
+          "raw": -0.088,
+          "contrib": -0.191
+        },
+        {
+          "feat": "DIFF_DRB",
+          "label": "Def. Rebound Edge",
+          "raw": -2.2,
+          "contrib": -0.1848
+        },
+        {
+          "feat": "DIFF_EFG_D",
+          "label": "Eff. FG% Def. Edge",
+          "raw": -4.3,
+          "contrib": 0.1699
+        }
+      ],
+      "total_pos": 2.654,
+      "total_neg": -1.503
+    },
+    {
+      "round": "E8",
+      "team": "Michigan",
+      "team_seed": 1,
+      "opponent": "Uconn",
+      "opp_seed": 2,
+      "champ_prob": 0.7969,
+      "won": true,
+      "contributions": [
+        {
+          "feat": "DIFF_ADJDE",
+          "label": "Def. Efficiency Edge",
+          "raw": -3.729,
+          "contrib": 0.635
+        },
+        {
+          "feat": "DIFF_ADJOE",
+          "label": "Off. Efficiency Edge",
+          "raw": 5.516,
+          "contrib": 0.5493
+        },
+        {
+          "feat": "DIFF_FT_PCT_OPP",
+          "label": "Opp. FT% Edge",
+          "raw": 2.9,
+          "contrib": 0.1368
+        },
+        {
+          "feat": "DIFF_ADJ_T",
+          "label": "Tempo Edge",
+          "raw": 6.721,
+          "contrib": -0.1271
+        },
+        {
+          "feat": "A_POWER5",
+          "label": "Power 5 Conference",
+          "raw": 1.0,
+          "contrib": 0.0956
+        },
+        {
+          "feat": "B_POWER5",
+          "label": "Opp. Power 5 Conf.",
+          "raw": 1.0,
+          "contrib": -0.0956
+        },
+        {
+          "feat": "DIFF_3P_D",
+          "label": "3-Pt Defense Edge",
+          "raw": -1.2,
+          "contrib": 0.0864
+        },
+        {
+          "feat": "DIFF_TORD",
+          "label": "Forced TO Edge",
+          "raw": -2.5,
+          "contrib": 0.0807
+        }
+      ],
+      "total_pos": 2.01,
+      "total_neg": -0.643
+    },
+    {
+      "round": "F4",
+      "team": "Michigan",
+      "team_seed": 1,
+      "opponent": "Florida",
+      "opp_seed": 1,
+      "champ_prob": 0.7002,
+      "won": true,
+      "contributions": [
+        {
+          "feat": "DIFF_DRB",
+          "label": "Def. Rebound Edge",
+          "raw": 3.3,
+          "contrib": 0.2772
+        },
+        {
+          "feat": "DIFF_ADJOE",
+          "label": "Off. Efficiency Edge",
+          "raw": 2.226,
+          "contrib": 0.2217
+        },
+        {
+          "feat": "DIFF_3P_D",
+          "label": "3-Pt Defense Edge",
+          "raw": -2.6,
+          "contrib": 0.1872
+        },
+        {
+          "feat": "DIFF_FT_PCT_OPP",
+          "label": "Opp. FT% Edge",
+          "raw": 3.2,
+          "contrib": 0.1509
+        },
+        {
+          "feat": "DIFF_BLK_D",
+          "label": "Shot-Blocking Edge",
+          "raw": 2.0,
+          "contrib": 0.1363
+        },
+        {
+          "feat": "DIFF_ORB",
+          "label": "Off. Rebound Edge",
+          "raw": -6.7,
+          "contrib": -0.1215
+        },
+        {
+          "feat": "DIFF_EFG_O",
+          "label": "Eff. FG% Off. Edge",
+          "raw": 4.7,
+          "contrib": 0.1167
+        },
+        {
+          "feat": "DIFF_3PR_O",
+          "label": "3-Pt Rate Off. Edge",
+          "raw": 4.8,
+          "contrib": -0.1055
+        }
+      ],
+      "total_pos": 1.521,
+      "total_neg": -0.672
+    },
+    {
+      "round": "Championship",
+      "team": "Michigan",
+      "team_seed": 1,
+      "opponent": "Duke",
+      "opp_seed": 1,
+      "champ_prob": 0.6387,
+      "won": true,
+      "contributions": [
+        {
+          "feat": "DIFF_DRB",
+          "label": "Def. Rebound Edge",
+          "raw": 3.2,
+          "contrib": 0.2688
+        },
+        {
+          "feat": "DIFF_ADJDE",
+          "label": "Def. Efficiency Edge",
+          "raw": 1.288,
+          "contrib": -0.2193
+        },
+        {
+          "feat": "DIFF_FT_PCT_OPP",
+          "label": "Opp. FT% Edge",
+          "raw": 4.1,
+          "contrib": 0.1934
+        },
+        {
+          "feat": "DIFF_EXP",
+          "label": "Experience Edge",
+          "raw": 1.053,
+          "contrib": 0.1405
+        },
+        {
+          "feat": "DIFF_AST_D",
+          "label": "Assist Defense Edge",
+          "raw": -7.1,
+          "contrib": 0.1378
+        },
+        {
+          "feat": "DIFF_TOR",
+          "label": "Turnover Rate Edge",
+          "raw": 1.4,
+          "contrib": -0.1186
+        },
+        {
+          "feat": "DIFF_ADJ_T",
+          "label": "Tempo Edge",
+          "raw": 5.831,
+          "contrib": -0.1103
+        },
+        {
+          "feat": "A_POWER5",
+          "label": "Power 5 Conference",
+          "raw": 1.0,
+          "contrib": 0.0956
+        }
+      ],
+      "total_pos": 1.39,
+      "total_neg": -0.821
+    }
+  ],
+  "all_paths": {
+    "Arizona": [
+      {
+        "round": "R64",
+        "team": "Arizona",
+        "team_seed": 1,
+        "opponent": "UMBC",
+        "opp_seed": 16,
+        "champ_prob": 0.99,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -18.291,
+            "contrib": 3.1146
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 17.438,
+            "contrib": 1.7364
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -15.0,
+            "contrib": -0.7375
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -11.5,
+            "contrib": 0.2528
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": 13.3,
+            "contrib": 0.2412
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -5.9,
+            "contrib": -0.2396
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": 4.0,
+            "contrib": 0.1887
+          },
+          {
+            "feat": "B_POWER5",
+            "label": "Opp. Power 5 Conf.",
+            "raw": 0.0,
+            "contrib": 0.1882
+          }
+        ],
+        "total_pos": 6.551,
+        "total_neg": -1.954
+      },
+      {
+        "round": "R32",
+        "team": "Arizona",
+        "team_seed": 1,
+        "opponent": "UCLA",
+        "opp_seed": 8,
+        "champ_prob": 0.6951,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -11.23,
+            "contrib": 1.9123
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -5.9,
+            "contrib": -0.4956
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -10.0,
+            "contrib": -0.4062
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -7.0,
+            "contrib": -0.3442
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.113,
+            "contrib": -0.2452
+          },
+          {
+            "feat": "DIFF_AST_D",
+            "label": "Assist Defense Edge",
+            "raw": -12.5,
+            "contrib": 0.2426
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -5.8,
+            "contrib": 0.2291
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -8.5,
+            "contrib": 0.1869
+          }
+        ],
+        "total_pos": 3.126,
+        "total_neg": -2.302
+      },
+      {
+        "round": "S16",
+        "team": "Arizona",
+        "team_seed": 1,
+        "opponent": "Gonzaga",
+        "opp_seed": 4,
+        "champ_prob": 0.7833,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -3.048,
+            "contrib": 0.519
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 5.059,
+            "contrib": 0.5038
+          },
+          {
+            "feat": "B_POWER5",
+            "label": "Opp. Power 5 Conf.",
+            "raw": 0.0,
+            "contrib": 0.1882
+          },
+          {
+            "feat": "DIFF_BLK_D",
+            "label": "Shot-Blocking Edge",
+            "raw": 2.5,
+            "contrib": 0.1704
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -3.0,
+            "contrib": -0.1475
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 1.5,
+            "contrib": -0.127
+          },
+          {
+            "feat": "DIFF_TORD",
+            "label": "Forced TO Edge",
+            "raw": -3.6,
+            "contrib": 0.1162
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -2.8,
+            "contrib": -0.1137
+          }
+        ],
+        "total_pos": 2.077,
+        "total_neg": -0.792
+      },
+      {
+        "round": "E8",
+        "team": "Arizona",
+        "team_seed": 1,
+        "opponent": "Illinois",
+        "opp_seed": 2,
+        "champ_prob": 0.5497,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -7.185,
+            "contrib": 1.2235
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": -6.774,
+            "contrib": -0.6745
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -24.0,
+            "contrib": 0.5277
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.08,
+            "contrib": -0.1736
+          },
+          {
+            "feat": "DIFF_TORD",
+            "label": "Forced TO Edge",
+            "raw": 5.2,
+            "contrib": -0.1679
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -4.1,
+            "contrib": -0.1665
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 1.8,
+            "contrib": -0.1524
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -2.9,
+            "contrib": 0.1146
+          }
+        ],
+        "total_pos": 2.158,
+        "total_neg": -1.958
+      },
+      {
+        "round": "F4",
+        "team": "Arizona",
+        "team_seed": 1,
+        "opponent": "Duke",
+        "opp_seed": 1,
+        "champ_prob": 0.494,
+        "won": false,
+        "contributions": [
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -17.3,
+            "contrib": 0.3804
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": -2.829,
+            "contrib": -0.2817
+          },
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": 1.029,
+            "contrib": -0.1752
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -2.8,
+            "contrib": -0.1137
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": 1.3,
+            "contrib": 0.1092
+          },
+          {
+            "feat": "A_POWER5",
+            "label": "Power 5 Conference",
+            "raw": 1.0,
+            "contrib": 0.0956
+          },
+          {
+            "feat": "B_POWER5",
+            "label": "Opp. Power 5 Conf.",
+            "raw": 1.0,
+            "contrib": -0.0956
+          },
+          {
+            "feat": "DIFF_ADJ_T",
+            "label": "Tempo Edge",
+            "raw": 4.43,
+            "contrib": -0.0838
+          }
+        ],
+        "total_pos": 1.041,
+        "total_neg": -1.065
+      }
+    ],
+    "Duke": [
+      {
+        "round": "R64",
+        "team": "Duke",
+        "team_seed": 1,
+        "opponent": "Lehigh",
+        "opp_seed": 16,
+        "champ_prob": 0.9961,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -23.202,
+            "contrib": 3.9509
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 25.533,
+            "contrib": 2.5425
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -15.0,
+            "contrib": -0.7375
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -6.8,
+            "contrib": -0.5712
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.16,
+            "contrib": -0.3472
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": 15.0,
+            "contrib": 0.272
+          },
+          {
+            "feat": "DIFF_3P_D",
+            "label": "3-Pt Defense Edge",
+            "raw": -3.5,
+            "contrib": 0.2521
+          },
+          {
+            "feat": "DIFF_PPP_O",
+            "label": "Pts/Poss Off. Edge",
+            "raw": 0.185,
+            "contrib": 0.236
+          }
+        ],
+        "total_pos": 8.318,
+        "total_neg": -2.785
+      },
+      {
+        "round": "R32",
+        "team": "Duke",
+        "team_seed": 1,
+        "opponent": "Ohio State",
+        "opp_seed": 9,
+        "champ_prob": 0.6782,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -12.118,
+            "contrib": 2.0635
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -5.3,
+            "contrib": -0.4452
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -8.0,
+            "contrib": -0.3933
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.151,
+            "contrib": -0.3277
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 3.114,
+            "contrib": 0.3101
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -6.0,
+            "contrib": -0.2437
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -4.3,
+            "contrib": 0.1699
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": -3.2,
+            "contrib": -0.1509
+          }
+        ],
+        "total_pos": 3.006,
+        "total_neg": -2.26
+      },
+      {
+        "round": "S16",
+        "team": "Duke",
+        "team_seed": 1,
+        "opponent": "Arkansas",
+        "opp_seed": 5,
+        "champ_prob": 0.6376,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -11.842,
+            "contrib": 2.0165
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -6.8,
+            "contrib": -0.5712
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.16,
+            "contrib": -0.3472
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -7.9,
+            "contrib": -0.3209
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 3.2,
+            "contrib": -0.271
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": 10.8,
+            "contrib": -0.2374
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -5.7,
+            "contrib": 0.2252
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -4.0,
+            "contrib": -0.1967
+          }
+        ],
+        "total_pos": 2.928,
+        "total_neg": -2.363
+      },
+      {
+        "round": "E8",
+        "team": "Duke",
+        "team_seed": 1,
+        "opponent": "Tennessee",
+        "opp_seed": 6,
+        "champ_prob": 0.6776,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -5.696,
+            "contrib": 0.9699
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 6.417,
+            "contrib": 0.639
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": 12.1,
+            "contrib": -0.266
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -5.0,
+            "contrib": -0.2458
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -2.4,
+            "contrib": -0.2016
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.087,
+            "contrib": -0.1888
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": -2.0,
+            "contrib": 0.1694
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": -8.1,
+            "contrib": -0.1469
+          }
+        ],
+        "total_pos": 2.462,
+        "total_neg": -1.719
+      },
+      {
+        "round": "F4",
+        "team": "Duke",
+        "team_seed": 1,
+        "opponent": "Arizona",
+        "opp_seed": 1,
+        "champ_prob": 0.506,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": 17.3,
+            "contrib": -0.3804
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 2.829,
+            "contrib": 0.2817
+          },
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -1.029,
+            "contrib": 0.1752
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": 2.8,
+            "contrib": 0.1137
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -1.3,
+            "contrib": -0.1092
+          },
+          {
+            "feat": "A_POWER5",
+            "label": "Power 5 Conference",
+            "raw": 1.0,
+            "contrib": 0.0956
+          },
+          {
+            "feat": "B_POWER5",
+            "label": "Opp. Power 5 Conf.",
+            "raw": 1.0,
+            "contrib": -0.0956
+          },
+          {
+            "feat": "DIFF_ADJ_T",
+            "label": "Tempo Edge",
+            "raw": -4.43,
+            "contrib": 0.0838
+          }
+        ],
+        "total_pos": 1.065,
+        "total_neg": -1.041
+      },
+      {
+        "round": "Championship",
+        "team": "Duke",
+        "team_seed": 1,
+        "opponent": "Michigan",
+        "opp_seed": 1,
+        "champ_prob": 0.3613,
+        "won": false,
+        "contributions": [
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -3.2,
+            "contrib": -0.2688
+          },
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -1.288,
+            "contrib": 0.2193
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": -4.1,
+            "contrib": -0.1934
+          },
+          {
+            "feat": "DIFF_EXP",
+            "label": "Experience Edge",
+            "raw": -1.053,
+            "contrib": -0.1405
+          },
+          {
+            "feat": "DIFF_AST_D",
+            "label": "Assist Defense Edge",
+            "raw": 7.1,
+            "contrib": -0.1378
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": -1.4,
+            "contrib": 0.1186
+          },
+          {
+            "feat": "DIFF_ADJ_T",
+            "label": "Tempo Edge",
+            "raw": -5.831,
+            "contrib": 0.1103
+          },
+          {
+            "feat": "A_POWER5",
+            "label": "Power 5 Conference",
+            "raw": 1.0,
+            "contrib": 0.0956
+          }
+        ],
+        "total_pos": 0.821,
+        "total_neg": -1.39
+      }
+    ],
+    "Florida": [
+      {
+        "round": "R64",
+        "team": "Florida",
+        "team_seed": 1,
+        "opponent": "Furman",
+        "opp_seed": 16,
+        "champ_prob": 0.9868,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -17.039,
+            "contrib": 2.9014
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 19.654,
+            "contrib": 1.9571
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -15.0,
+            "contrib": -0.7375
+          },
+          {
+            "feat": "DIFF_BLK_D",
+            "label": "Shot-Blocking Edge",
+            "raw": -3.7,
+            "contrib": -0.2522
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -6.1,
+            "contrib": -0.2478
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -2.7,
+            "contrib": -0.2268
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": 11.7,
+            "contrib": 0.2122
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -8.9,
+            "contrib": 0.1957
+          }
+        ],
+        "total_pos": 6.269,
+        "total_neg": -1.952
+      },
+      {
+        "round": "R32",
+        "team": "Florida",
+        "team_seed": 1,
+        "opponent": "Iowa",
+        "opp_seed": 9,
+        "champ_prob": 0.7757,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -8.271,
+            "contrib": 1.4084
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 4.656,
+            "contrib": 0.4636
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -8.0,
+            "contrib": -0.3933
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -8.8,
+            "contrib": -0.3574
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -6.5,
+            "contrib": 0.2568
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -3.0,
+            "contrib": -0.252
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": 12.4,
+            "contrib": 0.2249
+          },
+          {
+            "feat": "DIFF_TORD",
+            "label": "Forced TO Edge",
+            "raw": -5.6,
+            "contrib": 0.1808
+          }
+        ],
+        "total_pos": 3.112,
+        "total_neg": -1.872
+      },
+      {
+        "round": "S16",
+        "team": "Florida",
+        "team_seed": 1,
+        "opponent": "Virginia",
+        "opp_seed": 4,
+        "champ_prob": 0.6639,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -4.158,
+            "contrib": 0.708
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 5.604,
+            "contrib": 0.558
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -3.9,
+            "contrib": -0.3276
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -9.4,
+            "contrib": 0.2067
+          },
+          {
+            "feat": "DIFF_BLK_D",
+            "label": "Shot-Blocking Edge",
+            "raw": -2.4,
+            "contrib": -0.1636
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -3.0,
+            "contrib": -0.1475
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": -2.9,
+            "contrib": -0.1368
+          },
+          {
+            "feat": "DIFF_AST_D",
+            "label": "Assist Defense Edge",
+            "raw": -6.9,
+            "contrib": 0.1339
+          }
+        ],
+        "total_pos": 2.001,
+        "total_neg": -1.32
+      },
+      {
+        "round": "E8",
+        "team": "Florida",
+        "team_seed": 1,
+        "opponent": "Houston",
+        "opp_seed": 2,
+        "champ_prob": 0.5117,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -6.2,
+            "contrib": -0.5208
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 3.4,
+            "contrib": -0.2879
+          },
+          {
+            "feat": "DIFF_AST_D",
+            "label": "Assist Defense Edge",
+            "raw": -11.0,
+            "contrib": 0.2135
+          },
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -1.249,
+            "contrib": 0.2127
+          },
+          {
+            "feat": "DIFF_TORD",
+            "label": "Forced TO Edge",
+            "raw": -6.0,
+            "contrib": 0.1937
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": 3.0,
+            "contrib": 0.1415
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 1.413,
+            "contrib": 0.1407
+          },
+          {
+            "feat": "DIFF_ADJ_T",
+            "label": "Tempo Edge",
+            "raw": 7.209,
+            "contrib": -0.1363
+          }
+        ],
+        "total_pos": 1.546,
+        "total_neg": -1.5
+      },
+      {
+        "round": "F4",
+        "team": "Florida",
+        "team_seed": 1,
+        "opponent": "Michigan",
+        "opp_seed": 1,
+        "champ_prob": 0.2998,
+        "won": false,
+        "contributions": [
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -3.3,
+            "contrib": -0.2772
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": -2.226,
+            "contrib": -0.2217
+          },
+          {
+            "feat": "DIFF_3P_D",
+            "label": "3-Pt Defense Edge",
+            "raw": 2.6,
+            "contrib": -0.1872
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": -3.2,
+            "contrib": -0.1509
+          },
+          {
+            "feat": "DIFF_BLK_D",
+            "label": "Shot-Blocking Edge",
+            "raw": -2.0,
+            "contrib": -0.1363
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": 6.7,
+            "contrib": 0.1215
+          },
+          {
+            "feat": "DIFF_EFG_O",
+            "label": "Eff. FG% Off. Edge",
+            "raw": -4.7,
+            "contrib": -0.1167
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": -4.8,
+            "contrib": 0.1055
+          }
+        ],
+        "total_pos": 0.672,
+        "total_neg": -1.521
+      }
+    ],
+    "Michigan": [
+      {
+        "round": "R64",
+        "team": "Michigan",
+        "team_seed": 1,
+        "opponent": "LIU",
+        "opp_seed": 16,
+        "champ_prob": 0.9954,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -18.301,
+            "contrib": 3.1163
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 25.095,
+            "contrib": 2.4989
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -15.0,
+            "contrib": -0.7375
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -4.5,
+            "contrib": -0.378
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": 13.2,
+            "contrib": -0.2902
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": 6.0,
+            "contrib": 0.283
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -6.7,
+            "contrib": -0.2721
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -5.6,
+            "contrib": 0.2212
+          }
+        ],
+        "total_pos": 7.591,
+        "total_neg": -2.212
+      },
+      {
+        "round": "R32",
+        "team": "Michigan",
+        "team_seed": 1,
+        "opponent": "Clemson",
+        "opp_seed": 8,
+        "champ_prob": 0.8881,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 13.308,
+            "contrib": 1.3252
+          },
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -5.629,
+            "contrib": 0.9585
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -7.0,
+            "contrib": -0.3442
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": 2.6,
+            "contrib": 0.2184
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -4.6,
+            "contrib": -0.1868
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 2.2,
+            "contrib": -0.1863
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -4.1,
+            "contrib": 0.162
+          },
+          {
+            "feat": "DIFF_3P_D",
+            "label": "3-Pt Defense Edge",
+            "raw": -2.2,
+            "contrib": 0.1584
+          }
+        ],
+        "total_pos": 3.542,
+        "total_neg": -1.471
+      },
+      {
+        "round": "S16",
+        "team": "Michigan",
+        "team_seed": 1,
+        "opponent": "Vanderbilt",
+        "opp_seed": 5,
+        "champ_prob": 0.7598,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -7.802,
+            "contrib": 1.3285
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 3.624,
+            "contrib": 0.3609
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 3.3,
+            "contrib": -0.2795
+          },
+          {
+            "feat": "DIFF_2P_D",
+            "label": "2-Pt Defense Edge",
+            "raw": -5.3,
+            "contrib": -0.2153
+          },
+          {
+            "feat": "DIFF_SEED",
+            "label": "Seeding Advantage",
+            "raw": -4.0,
+            "contrib": -0.1967
+          },
+          {
+            "feat": "DIFF_PPP_D",
+            "label": "Pts/Poss Def. Edge",
+            "raw": -0.088,
+            "contrib": -0.191
+          },
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": -2.2,
+            "contrib": -0.1848
+          },
+          {
+            "feat": "DIFF_EFG_D",
+            "label": "Eff. FG% Def. Edge",
+            "raw": -4.3,
+            "contrib": 0.1699
+          }
+        ],
+        "total_pos": 2.654,
+        "total_neg": -1.503
+      },
+      {
+        "round": "E8",
+        "team": "Michigan",
+        "team_seed": 1,
+        "opponent": "Uconn",
+        "opp_seed": 2,
+        "champ_prob": 0.7969,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": -3.729,
+            "contrib": 0.635
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 5.516,
+            "contrib": 0.5493
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": 2.9,
+            "contrib": 0.1368
+          },
+          {
+            "feat": "DIFF_ADJ_T",
+            "label": "Tempo Edge",
+            "raw": 6.721,
+            "contrib": -0.1271
+          },
+          {
+            "feat": "A_POWER5",
+            "label": "Power 5 Conference",
+            "raw": 1.0,
+            "contrib": 0.0956
+          },
+          {
+            "feat": "B_POWER5",
+            "label": "Opp. Power 5 Conf.",
+            "raw": 1.0,
+            "contrib": -0.0956
+          },
+          {
+            "feat": "DIFF_3P_D",
+            "label": "3-Pt Defense Edge",
+            "raw": -1.2,
+            "contrib": 0.0864
+          },
+          {
+            "feat": "DIFF_TORD",
+            "label": "Forced TO Edge",
+            "raw": -2.5,
+            "contrib": 0.0807
+          }
+        ],
+        "total_pos": 2.01,
+        "total_neg": -0.643
+      },
+      {
+        "round": "F4",
+        "team": "Michigan",
+        "team_seed": 1,
+        "opponent": "Florida",
+        "opp_seed": 1,
+        "champ_prob": 0.7002,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": 3.3,
+            "contrib": 0.2772
+          },
+          {
+            "feat": "DIFF_ADJOE",
+            "label": "Off. Efficiency Edge",
+            "raw": 2.226,
+            "contrib": 0.2217
+          },
+          {
+            "feat": "DIFF_3P_D",
+            "label": "3-Pt Defense Edge",
+            "raw": -2.6,
+            "contrib": 0.1872
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": 3.2,
+            "contrib": 0.1509
+          },
+          {
+            "feat": "DIFF_BLK_D",
+            "label": "Shot-Blocking Edge",
+            "raw": 2.0,
+            "contrib": 0.1363
+          },
+          {
+            "feat": "DIFF_ORB",
+            "label": "Off. Rebound Edge",
+            "raw": -6.7,
+            "contrib": -0.1215
+          },
+          {
+            "feat": "DIFF_EFG_O",
+            "label": "Eff. FG% Off. Edge",
+            "raw": 4.7,
+            "contrib": 0.1167
+          },
+          {
+            "feat": "DIFF_3PR_O",
+            "label": "3-Pt Rate Off. Edge",
+            "raw": 4.8,
+            "contrib": -0.1055
+          }
+        ],
+        "total_pos": 1.521,
+        "total_neg": -0.672
+      },
+      {
+        "round": "Championship",
+        "team": "Michigan",
+        "team_seed": 1,
+        "opponent": "Duke",
+        "opp_seed": 1,
+        "champ_prob": 0.6387,
+        "won": true,
+        "contributions": [
+          {
+            "feat": "DIFF_DRB",
+            "label": "Def. Rebound Edge",
+            "raw": 3.2,
+            "contrib": 0.2688
+          },
+          {
+            "feat": "DIFF_ADJDE",
+            "label": "Def. Efficiency Edge",
+            "raw": 1.288,
+            "contrib": -0.2193
+          },
+          {
+            "feat": "DIFF_FT_PCT_OPP",
+            "label": "Opp. FT% Edge",
+            "raw": 4.1,
+            "contrib": 0.1934
+          },
+          {
+            "feat": "DIFF_EXP",
+            "label": "Experience Edge",
+            "raw": 1.053,
+            "contrib": 0.1405
+          },
+          {
+            "feat": "DIFF_AST_D",
+            "label": "Assist Defense Edge",
+            "raw": -7.1,
+            "contrib": 0.1378
+          },
+          {
+            "feat": "DIFF_TOR",
+            "label": "Turnover Rate Edge",
+            "raw": 1.4,
+            "contrib": -0.1186
+          },
+          {
+            "feat": "DIFF_ADJ_T",
+            "label": "Tempo Edge",
+            "raw": 5.831,
+            "contrib": -0.1103
+          },
+          {
+            "feat": "A_POWER5",
+            "label": "Power 5 Conference",
+            "raw": 1.0,
+            "contrib": 0.0956
+          }
+        ],
+        "total_pos": 1.39,
+        "total_neg": -0.821
+      }
+    ]
+  },
+  "f4_list": [
+    {
+      "team": "Michigan",
+      "seed": 1
+    },
+    {
+      "team": "Florida",
+      "seed": 1
+    },
+    {
+      "team": "Arizona",
+      "seed": 1
+    },
+    {
+      "team": "Duke",
+      "seed": 1
+    }
+  ],
+  "contenders": [
+    {
+      "team": "Michigan",
+      "seed": 1,
+      "region": "Midwest",
+      "win_pct": 0.3173,
+      "f4_pct": 0.5859,
+      "is_champion": true,
+      "stats": {
+        "ADJOE": 129.3,
+        "ADJDE": 91.7,
+        "EFG_O": 58.7,
+        "EFG_D": 44.2,
+        "DRB": 28.1,
+        "TOR": 16.9,
+        "ADJ_T": 71.6
+      },
+      "vs_champion": {
+        "ADJOE": 0.0,
+        "ADJDE": 0.0,
+        "EFG_O": 0.0,
+        "EFG_D": 0.0,
+        "DRB": 0.0,
+        "TOR": 0.0,
+        "ADJ_T": 0.0
+      }
+    },
+    {
+      "team": "Arizona",
+      "seed": 1,
+      "region": "West",
+      "win_pct": 0.1097,
+      "f4_pct": 0.3448,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 125.6,
+        "ADJDE": 91.5,
+        "EFG_O": 55.0,
+        "EFG_D": 44.6,
+        "DRB": 26.2,
+        "TOR": 15.2,
+        "ADJ_T": 70.2
+      },
+      "vs_champion": {
+        "ADJOE": -3.7,
+        "ADJDE": -0.3,
+        "EFG_O": -3.7,
+        "EFG_D": 0.4,
+        "DRB": -1.9,
+        "TOR": -1.7,
+        "ADJ_T": -1.4
+      }
+    },
+    {
+      "team": "Duke",
+      "seed": 1,
+      "region": "East",
+      "win_pct": 0.1057,
+      "f4_pct": 0.3496,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 128.5,
+        "ADJDE": 90.4,
+        "EFG_O": 57.4,
+        "EFG_D": 45.8,
+        "DRB": 24.9,
+        "TOR": 15.5,
+        "ADJ_T": 65.8
+      },
+      "vs_champion": {
+        "ADJOE": -0.9,
+        "ADJDE": -1.3,
+        "EFG_O": -1.3,
+        "EFG_D": 1.6,
+        "DRB": -3.2,
+        "TOR": -1.4,
+        "ADJ_T": -5.8
+      }
+    },
+    {
+      "team": "Illinois",
+      "seed": 2,
+      "region": "West",
+      "win_pct": 0.0892,
+      "f4_pct": 0.3342,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 132.4,
+        "ADJDE": 98.7,
+        "EFG_O": 55.0,
+        "EFG_D": 47.5,
+        "DRB": 26.9,
+        "TOR": 13.4,
+        "ADJ_T": 65.6
+      },
+      "vs_champion": {
+        "ADJOE": 3.1,
+        "ADJDE": 6.9,
+        "EFG_O": -3.7,
+        "EFG_D": 3.3,
+        "DRB": -1.2,
+        "TOR": -3.5,
+        "ADJ_T": -6.1
+      }
+    },
+    {
+      "team": "Florida",
+      "seed": 1,
+      "region": "South",
+      "win_pct": 0.0735,
+      "f4_pct": 0.3207,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 127.1,
+        "ADJDE": 92.3,
+        "EFG_O": 54.0,
+        "EFG_D": 46.0,
+        "DRB": 24.8,
+        "TOR": 16.1,
+        "ADJ_T": 70.5
+      },
+      "vs_champion": {
+        "ADJOE": -2.2,
+        "ADJDE": 0.6,
+        "EFG_O": -4.7,
+        "EFG_D": 1.8,
+        "DRB": -3.3,
+        "TOR": -0.8,
+        "ADJ_T": -1.1
+      }
+    },
+    {
+      "team": "Houston",
+      "seed": 2,
+      "region": "South",
+      "win_pct": 0.0726,
+      "f4_pct": 0.3504,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 125.7,
+        "ADJDE": 93.6,
+        "EFG_O": 52.3,
+        "EFG_D": 46.9,
+        "DRB": 31.0,
+        "TOR": 12.7,
+        "ADJ_T": 63.3
+      },
+      "vs_champion": {
+        "ADJOE": -3.6,
+        "ADJDE": 1.8,
+        "EFG_O": -6.4,
+        "EFG_D": 2.7,
+        "DRB": 2.9,
+        "TOR": -4.2,
+        "ADJ_T": -8.3
+      }
+    },
+    {
+      "team": "Arkansas",
+      "seed": 5,
+      "region": "East",
+      "win_pct": 0.0241,
+      "f4_pct": 0.1235,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 128.3,
+        "ADJDE": 102.3,
+        "EFG_O": 56.7,
+        "EFG_D": 51.5,
+        "DRB": 31.7,
+        "TOR": 12.3,
+        "ADJ_T": 71.0
+      },
+      "vs_champion": {
+        "ADJOE": -1.0,
+        "ADJDE": 10.6,
+        "EFG_O": -2.0,
+        "EFG_D": 7.3,
+        "DRB": 3.6,
+        "TOR": -4.6,
+        "ADJ_T": -0.6
+      }
+    },
+    {
+      "team": "Vanderbilt",
+      "seed": 5,
+      "region": "Midwest",
+      "win_pct": 0.0228,
+      "f4_pct": 0.1025,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 125.7,
+        "ADJDE": 99.5,
+        "EFG_O": 55.6,
+        "EFG_D": 48.5,
+        "DRB": 30.3,
+        "TOR": 13.6,
+        "ADJ_T": 69.4
+      },
+      "vs_champion": {
+        "ADJOE": -3.6,
+        "ADJDE": 7.8,
+        "EFG_O": -3.1,
+        "EFG_D": 4.3,
+        "DRB": 2.2,
+        "TOR": -3.3,
+        "ADJ_T": -2.2
+      }
+    },
+    {
+      "team": "Uconn",
+      "seed": 2,
+      "region": "Midwest",
+      "win_pct": 0.0227,
+      "f4_pct": 0.1239,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 123.8,
+        "ADJDE": 95.5,
+        "EFG_O": 55.6,
+        "EFG_D": 45.6,
+        "DRB": 28.6,
+        "TOR": 16.5,
+        "ADJ_T": 64.9
+      },
+      "vs_champion": {
+        "ADJOE": -5.5,
+        "ADJDE": 3.7,
+        "EFG_O": -3.1,
+        "EFG_D": 1.4,
+        "DRB": 0.5,
+        "TOR": -0.4,
+        "ADJ_T": -6.7
+      }
+    },
+    {
+      "team": "Alabama",
+      "seed": 3,
+      "region": "West",
+      "win_pct": 0.0224,
+      "f4_pct": 0.1495,
+      "is_champion": false,
+      "stats": {
+        "ADJOE": 130.3,
+        "ADJDE": 103.2,
+        "EFG_O": 55.6,
+        "EFG_D": 49.1,
+        "DRB": 33.0,
+        "TOR": 13.2,
+        "ADJ_T": 72.8
+      },
+      "vs_champion": {
+        "ADJOE": 0.9,
+        "ADJDE": 11.5,
+        "EFG_O": -3.1,
+        "EFG_D": 4.9,
+        "DRB": 4.9,
+        "TOR": -3.7,
+        "ADJ_T": 1.2
+      }
+    }
+  ],
+  "champion": "Michigan",
+  "stat_cols": [
+    {
+      "col": "ADJOE",
+      "label": "Adj. Off. Eff."
+    },
+    {
+      "col": "ADJDE",
+      "label": "Adj. Def. Eff."
+    },
+    {
+      "col": "EFG_O",
+      "label": "eFG% Off."
+    },
+    {
+      "col": "EFG_D",
+      "label": "eFG% Def."
+    },
+    {
+      "col": "DRB",
+      "label": "Def. Reb. Rate"
+    },
+    {
+      "col": "TOR",
+      "label": "TO Rate"
+    },
+    {
+      "col": "ADJ_T",
+      "label": "Tempo"
+    }
+  ]
+};
+
+// ── Tab switching ──────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'monte-carlo' && !mcRendered) renderMC();
+  if (name === 'analysis'    && !analysisRendered) renderAnalysis();
+}
+
+// ── Color utilities ────────────────────────────────────────────────────────
+function probColor(p) {
+  // Green for high confidence, blue for near 50/50
+  if (p >= 0.85) return '#22c55e';
+  if (p >= 0.70) return '#84cc16';
+  if (p >= 0.58) return '#eab308';
+  return '#3b82f6';
+}
+
+function probBg(p) {
+  const intensity = Math.round((p - 0.5) * 2 * 60);  // 0-60
+  return `rgba(232,160,32,${0.05 + (p-0.5)*0.3})`;
+}
+
+// ── Bracket renderer ───────────────────────────────────────────────────────
+// ── Region color map ──────────────────────────────────────────────────────────
+const REGION_COLORS = {
+  East:    '#60a5fa',
+  Midwest: '#4ade80',
+  South:   '#f87171',
+  West:    '#a78bfa',
+};
+
+// ── Build region toggle buttons ────────────────────────────────────────────────
+function initBracketToggle() {
+  const bar = document.getElementById('bracket-toggle');
+  const options = ['All', ...REGIONS];
+  bar.innerHTML = options.map(r =>
+    `<button class="bracket-toggle-btn${r==='All'?' active':''}"
+             data-region="${r}"
+             onclick="switchBracketView('${r}', this)">${r}</button>`
+  ).join('');
+}
+
+function switchBracketView(region, btn) {
+  document.querySelectorAll('.bracket-toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBracket(region);
+}
+
+// ── Main bracket entry point ───────────────────────────────────────────────────
+function renderBracket(activeRegion) {
+  activeRegion = activeRegion || 'All';
+  const container = document.getElementById('bracket-render');
+
+  if (activeRegion === 'All') {
+    renderAllRegions(container);
+  } else {
+    renderSingleRegion(container, activeRegion);
+  }
+
+  // Attach tooltip events
+  container.querySelectorAll('.matchup').forEach(el => {
+    el.addEventListener('mouseenter', showTooltip);
+    el.addEventListener('mouseleave', hideTooltip);
+    el.addEventListener('mousemove', moveTooltip);
+  });
+}
+
+// ── ALL view: left/center/right layout with region color labels ───────────────
+function renderAllRegions(container) {
+  const leftRegions  = [REGIONS[0], REGIONS[1]];
+  const rightRegions = [REGIONS[2], REGIONS[3]];
+
+  function buildRegionBlock(region, reversed) {
+    const color  = REGION_COLORS[region] || 'var(--accent)';
+    // Right-side regions read E8→S16→R32→R64 so they mirror toward the center.
+    // The spacer index must also invert so wider gaps stay near the outer edges.
+    const rndOrder = reversed ? ['E8','S16','R32','R64'] : ['R64','R32','S16','E8'];
+    let html = `<div style="display:flex;flex-direction:column">`;
+    html += `<div class="region-header-label" style="color:${color}">${region}</div>`;
+    html += `<div style="display:flex;gap:12px">`;
+    rndOrder.forEach((rnd, ri) => {
+      const games      = (BRACKET[region] && BRACKET[region][rnd]) || [];
+      // Invert spacer index for reversed side so E8 (outermost) keeps its large gap
+      const spacerIdx  = reversed ? (3 - ri) : ri;
+      const spacer     = Math.pow(2, spacerIdx) * 5 - 5;
+      html += `<div class="round-col">`;
+      html += `<div class="round-header">${roundDisplayName(rnd)}</div>`;
+      games.forEach((g, gi) => {
+        if (gi > 0) html += `<div class="matchup-spacer" style="height:${spacer}px"></div>`;
+        html += matchupHTML(g, rnd);
+      });
+      html += `</div>`;
+    });
+    html += `</div></div>`;
+    return html;
+  }
+
+  const f4Games   = DET_GAMES.filter(g => g.round === 'F4');
+  const champGames = DET_GAMES.filter(g => g.round === 'Championship');
+  let centerHTML = `<div class="center-rounds">`;
+  f4Games.forEach(g => {
+    centerHTML += `<div><div class="center-label">Final Four</div>${matchupHTML(g,'F4')}</div>`;
+  });
+  if (champGames.length > 0) {
+    const cg = champGames[0];
+    const pWinner = cg.prob_a >= 0.5 ? cg.prob_a : 1 - cg.prob_a;
+    centerHTML += `<div><div class="center-label">Championship</div>${matchupHTML(cg,'Championship')}</div>`;
+    centerHTML += `<div class="championship-card">
+      <div class="center-label">🏆 Predicted Champion</div>
+      <div class="championship-winner">${CHAMPION}</div>
+      <div class="championship-prob">Win Prob: ${(pWinner*100).toFixed(1)}%</div>
+    </div>`;
+  }
+  centerHTML += `</div>`;
+
+  container.innerHTML = `
+    <div class="bracket-container">
+      <div class="bracket-left">${buildRegionBlock(leftRegions[0])}${buildRegionBlock(leftRegions[1])}</div>
+      <div class="bracket-center">${centerHTML}</div>
+      <div class="bracket-right">${buildRegionBlock(rightRegions[0], true)}${buildRegionBlock(rightRegions[1], true)}</div>
+    </div>`;
+}
+
+// ── SINGLE REGION view: proper bracket tree, rounds read left to right ─────────
+// Vertical alignment: each round-r matchup is vertically centered over the two
+// round-(r-1) matchups that feed it. With matchup height M:
+//   slot height at round r = M * 2^r
+//   spacer between matchups at round r = M * (2^r - 1)
+//   top offset for first matchup at round r = M * (2^r - 1) / 2
+function renderSingleRegion(container, region) {
+  const color   = REGION_COLORS[region] || 'var(--accent)';
+  const M       = 66;  // approx matchup card height in px (2 rows + divider + bar)
+  const rounds  = ['R64','R32','S16','E8'];
+
+  // find the E8 winner for this region
+  const e8games = (BRACKET[region] && BRACKET[region]['E8']) || [];
+  const champ   = e8games.length ? e8games[0].winner : '';
+  const champSeed = e8games.length ? (e8games[0].winner === e8games[0].team_a ? e8games[0].seed_a : e8games[0].seed_b) : '';
+
+  let html = `<div style="padding:8px 0 16px">`;
+  html += `<div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;
+                       text-transform:uppercase;letter-spacing:0.1em;color:${color};
+                       margin-bottom:16px">${region} Region</div>`;
+  html += `<div class="single-bracket-container">`;
+
+  rounds.forEach((rnd, ri) => {
+    const games  = (BRACKET[region] && BRACKET[region][rnd]) || [];
+    const slotH  = M * Math.pow(2, ri);
+    const spacer = slotH - M;
+    const topOff = spacer / 2;
+
+    html += `<div class="single-round-col">`;
+    html += `<div class="round-header" style="text-align:center">${roundDisplayName(rnd)}</div>`;
+    html += `<div style="padding-top:${topOff}px">`;
+    games.forEach((g, gi) => {
+      if (gi > 0) html += `<div style="height:${spacer}px;flex-shrink:0"></div>`;
+      html += matchupHTML(g, rnd);
+    });
+    html += `</div></div>`;
+  });
+
+  // Regional champion card at the far right
+  html += `<div class="single-region-champion">`;
+  html += `<div class="round-header" style="text-align:center;margin-bottom:8px">Advances to F4</div>`;
+  if (champ) {
+    html += `<div class="region-champ-card" style="border-color:${color}">
+      <div class="region-champ-label" style="color:${color}">${region} Champion</div>
+      <div class="region-champ-name" style="color:${color}">${champ}</div>
+      <div class="region-champ-seed">Seed #${champSeed}</div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  html += `</div></div>`;
+  container.innerHTML = html;
+}
+
+function matchupHTML(g, rnd) {
+  const probA  = g.prob_a;
+  const probB  = 1 - probA;
+  const aWins  = g.winner === g.team_a;
+  const color  = probColor(Math.max(probA, probB));
+  const margin = Math.abs(probA - 0.5);
+  const barPct = Math.round(margin * 200);  // 0-100
+
+  const escA = g.team_a.replace(/'/g, "\'");
+  const escB = g.team_b.replace(/'/g, "\'");
+
+  return `<div class="matchup-wrapper">
+    <div class="matchup"
+         data-team-a="${escA}" data-seed-a="${g.seed_a}"
+         data-team-b="${escB}" data-seed-b="${g.seed_b}"
+         data-prob-a="${probA}" data-round="${rnd}"
+         data-winner="${g.winner.replace(/'/g, "\'")}"  >
+      <div class="team-row ${aWins ? 'winner' : 'loser'}">
+        <span class="seed-badge">${g.seed_a}</span>
+        <span class="team-name">${g.team_a}</span>
+        <span class="win-prob">${(probA*100).toFixed(0)}%</span>
+      </div>
+      <div class="matchup-divider"></div>
+      <div class="team-row ${!aWins ? 'winner' : 'loser'}">
+        <span class="seed-badge">${g.seed_b}</span>
+        <span class="team-name">${g.team_b}</span>
+        <span class="win-prob">${(probB*100).toFixed(0)}%</span>
+      </div>
+      <div class="conf-bar">
+        <div class="conf-bar-fill" style="width:${barPct}%;background:${color}"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function roundDisplayName(rnd) {
+  const map = {R64:'Round of 64',R32:'Round of 32',S16:'Sweet 16',
+                E8:'Elite Eight',F4:'Final Four',Championship:'Championship'};
+  return map[rnd] || rnd;
+}
+
+// ── Tooltip ────────────────────────────────────────────────────────────────
+function showTooltip(e) {
+  const el    = e.currentTarget;
+  const teamA = el.dataset.teamA;
+  const teamB = el.dataset.teamB;
+  const seedA = el.dataset.seedA;
+  const seedB = el.dataset.seedB;
+  const probA = parseFloat(el.dataset.probA);
+  const probB = 1 - probA;
+  const winner = el.dataset.winner;
+  const rnd    = el.dataset.round;
+
+  // Get MC data for both teams
+  const mcA = MC_DATA.find(r => r.team === teamA) || {};
+  const mcB = MC_DATA.find(r => r.team === teamB) || {};
+
+  const tip = document.getElementById('tooltip');
+  tip.innerHTML = `
+    <div class="tooltip-title">${roundDisplayName(rnd)} · Win Probability</div>
+    <div class="tooltip-matchup">
+      <div class="tooltip-team ${winner === teamA ? 'winner' : ''}">
+        <span>(${seedA}) ${teamA}</span>
+        <span class="tooltip-pct" style="color:${probColor(probA)}">${(probA*100).toFixed(1)}%</span>
+      </div>
+      <div class="tooltip-team ${winner === teamB ? 'winner' : ''}">
+        <span>(${seedB}) ${teamB}</span>
+        <span class="tooltip-pct" style="color:${probColor(probB)}">${(probB*100).toFixed(1)}%</span>
+      </div>
+    </div>
+    <div class="tooltip-conf">
+      <div style="margin-bottom:4px;font-weight:600;color:#e8eaf0">Monte Carlo Odds</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:0.75rem">
+        <span style="color:#7a8aa0">F4:</span>
+        <span>(${seedA}) ${(( mcA.F4||0)*100).toFixed(0)}% &nbsp; (${seedB}) ${((mcB.F4||0)*100).toFixed(0)}%</span>
+        <span style="color:#7a8aa0">Win:</span>
+        <span>(${seedA}) ${((mcA.Winner||0)*100).toFixed(0)}% &nbsp; (${seedB}) ${((mcB.Winner||0)*100).toFixed(0)}%</span>
+      </div>
+    </div>`;
+  tip.style.display = 'block';
+  moveTooltip(e);
+}
+
+function hideTooltip()  { document.getElementById('tooltip').style.display = 'none'; }
+function moveTooltip(e) {
+  const tip = document.getElementById('tooltip');
+  const x = e.clientX + 14;
+  const y = e.clientY + 14;
+  const maxX = window.innerWidth  - tip.offsetWidth  - 10;
+  const maxY = window.innerHeight - tip.offsetHeight - 10;
+  tip.style.left = Math.min(x, maxX) + 'px';
+  tip.style.top  = Math.min(y, maxY) + 'px';
+}
+
+// ── Monte Carlo table ──────────────────────────────────────────────────────
+let mcRendered = false;
+let currentSort = { col: 'Winner', dir: 'desc' };
+let currentRegion = 'All';
+let mcDataLocal = [...MC_DATA];
+
+function renderMC() {
+  // Add region filter buttons
+  const filterDiv = document.getElementById('region-filters');
+  REGIONS.forEach(r => {
+    filterDiv.innerHTML += `<button class="filter-btn" onclick="filterRegion('${r}', this)">${r}</button>`;
+  });
+  updateMCTable();
+  mcRendered = true;
+}
+
+function filterRegion(region, btn) {
+  currentRegion = region;
+  document.querySelectorAll('#region-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMCTable();
+}
+
+function sortTable(col) {
+  if (currentSort.col === col) {
+    currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
+  } else {
+    currentSort = { col, dir: 'desc' };
+  }
+  document.querySelectorAll('#mc-table th').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+  });
+  const colMap = { seed:0,team:1,region:2,R32:3,S16:4,E8:5,F4:6,Championship:7,Winner:8 };
+  const idx = colMap[currentSort.col];
+  const ths = document.querySelectorAll('#mc-table th');
+  if (ths[idx]) ths[idx].classList.add(currentSort.dir === 'desc' ? 'sort-desc' : 'sort-asc');
+  updateMCTable();
+}
+
+function updateMCTable() {
+  let data = currentRegion === 'All' ? [...MC_DATA]
+             : MC_DATA.filter(r => r.region === currentRegion);
+
+  data.sort((a,b) => {
+    let va = a[currentSort.col], vb = b[currentSort.col];
+    if (currentSort.col === 'team' || currentSort.col === 'region') {
+      return currentSort.dir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+    }
+    return currentSort.dir === 'desc' ? vb - va : va - vb;
+  });
+
+  const rounds = ['R32','S16','E8','F4','Championship','Winner'];
+  const cols   = ['R32','S16','E8','F4','Championship','Winner'];
+
+  const tbody = document.getElementById('mc-tbody');
+  tbody.innerHTML = data.map(row => {
+    const cells = cols.map(col => {
+      const pct = (row[col] * 100).toFixed(1);
+      const bar = Math.round(row[col] * 100);
+      const color = probColor(0.5 + row[col] * 0.5);
+      return `<td>
+        <div class="prob-bar-wrap">
+          <span class="prob-cell" style="min-width:42px">${pct}%</span>
+          <div class="prob-bar">
+            <div class="prob-bar-fill" style="width:${bar}%;background:${color}"></div>
+          </div>
+        </div>
+      </td>`;
+    }).join('');
+    const isChamp = row.team === CHAMPION;
+    return `<tr${isChamp ? ' style="background:rgba(232,160,32,0.08)"' : ''}>
+      <td><span class="seed-pill">${row.seed}</span></td>
+      <td style="font-weight:${isChamp?700:400};color:${isChamp?'var(--accent)':'inherit'}">${row.team}</td>
+      <td><span class="region-tag">${row.region}</span></td>
+      ${cells}
+    </tr>`;
+  }).join('');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+
+// ── Analysis tab ───────────────────────────────────────────────────────────
+let analysisRendered = false;
+
+function switchPath(teamName) {
+  if (ANALYSIS_DATA.all_paths && ANALYSIS_DATA.all_paths[teamName]) {
+    renderPathCards(ANALYSIS_DATA.all_paths[teamName]);
+  }
+}
+
+function renderPathCards(pathGames) {
+  const pathEl = document.getElementById('path-render');
+  if (!pathGames || !pathGames.length) { pathEl.innerHTML = ''; return; }
+  const roundDisplay = {
+    R64:'First Round', R32:'Second Round', S16:'Sweet 16',
+    E8:'Elite Eight', F4:'Final Four', Championship:'Championship'
+  };
+  const maxAbsContrib = Math.max(
+    ...pathGames.flatMap(g =>
+      g.contributions.map(c => Math.abs(c.contrib))
+    )
+  );
+
+  pathEl.innerHTML = pathGames.map(game => {
+    const pct  = (game.champ_prob * 100).toFixed(1);
+    const col  = probColor(game.champ_prob);
+
+    const contribRows = game.contributions.map(c => {
+      // DIFF_SEED is stored as champion_seed - opponent_seed, so a 1-seed
+      // vs 16-seed gives -15 (negative), but that IS a seeding advantage.
+      // Invert the display color for this feature only.
+      const seedInverted = (c.feat === 'DIFF_SEED');
+      const isPos   = seedInverted ? c.contrib <= 0 : c.contrib >= 0;
+      const barCol  = isPos ? 'var(--green)' : 'var(--red)';
+      // Bar fills from center: left half = negative, right half = positive
+      const halfPct = (Math.abs(c.contrib) / maxAbsContrib) * 50;
+      const barLeft  = isPos ? '50%' : `${50 - halfPct}%`;
+      const barWidth = `${halfPct}%`;
+      const sign     = isPos ? '+' : '';
+
+      return `<div class="contrib-row">
+        <span class="contrib-label" title="${c.feat}">${c.label}</span>
+        <div class="contrib-bar-wrap">
+          <div class="contrib-bar-center"></div>
+          <div class="contrib-bar-fill"
+               style="left:${barLeft};width:${barWidth};background:${barCol}"></div>
+        </div>
+        <span class="contrib-val" style="color:${barCol}">${sign}${Math.abs(c.contrib).toFixed(3)}</span>
+      </div>`;
+    }).join('');
+
+    const isLoss   = game.won === false;
+    const lossStyle = isLoss ? 'opacity:0.75;border-color:var(--red);' : '';
+    const lossLabel = isLoss
+      ? `<span style="font-size:0.65rem;font-weight:700;color:var(--red);
+                      background:rgba(239,68,68,0.12);border-radius:3px;
+                      padding:1px 6px;margin-left:8px;text-transform:uppercase;
+                      letter-spacing:0.08em;">Eliminated</span>`
+      : '';
+    return `<div class="path-game" style="${lossStyle}">
+      <div class="path-game-header">
+        <div>
+          <div class="path-round">${roundDisplay[game.round] || game.round}${lossLabel}</div>
+          <div class="path-matchup">
+            (${game.team_seed}) ${game.team} <span style="color:var(--muted);font-weight:400">vs</span>
+            (${game.opp_seed}) ${game.opponent}
+          </div>
+        </div>
+        <div class="path-prob" style="color:${col}">${pct}%</div>
+      </div>
+      ${contribRows}
+      <div class="net-summary">
+        <span class="net-pos">▲ For: +${game.total_pos.toFixed(3)}</span>
+        <span class="net-neg">▼ Against: ${game.total_neg.toFixed(3)}</span>
+        <span style="color:var(--muted)">Showing top 8 of ${game.contributions.length} features</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAnalysis() {
+  if (!ANALYSIS_DATA || !ANALYSIS_DATA.path_games) return;
+
+  // ── Populate F4 dropdown ──────────────────────────────────────────────────
+  const sel = document.getElementById('path-team-select');
+  if (sel && ANALYSIS_DATA.f4_list) {
+    sel.innerHTML = ANALYSIS_DATA.f4_list.map(t =>
+      `<option value="${t.team}"${t.team===ANALYSIS_DATA.champion?' selected':''}>`+
+      `(${t.seed}) ${t.team}${t.team===ANALYSIS_DATA.champion?' 🏆':''}` +
+      `</option>`
+    ).join('');
+  }
+
+  // ── Render champion path by default ──────────────────────────────────────
+  renderPathCards(ANALYSIS_DATA.path_games);
+
+  // ── Contenders table ──────────────────────────────────────────────────────
+  const statCols  = ANALYSIS_DATA.stat_cols;
+  const contenders = ANALYSIS_DATA.contenders;
+
+  // Header
+  const headEl = document.getElementById('contenders-head');
+  headEl.innerHTML = `<tr>
+    <th>Team</th>
+    <th>Win %</th>
+    ${statCols.map(s => `<th>${s.label}</th>`).join('')}
+  </tr>`;
+
+  // Rows
+  const bodyEl = document.getElementById('contenders-body');
+
+  // Find column ranges for color scaling
+  const statRanges = {};
+  statCols.forEach(s => {
+    const vals = contenders.map(c => c.stats[s.col]).filter(v => v !== null);
+    statRanges[s.col] = { min: Math.min(...vals), max: Math.max(...vals) };
+  });
+
+  bodyEl.innerHTML = contenders.map(c => {
+    const winPct  = (c.win_pct * 100).toFixed(1) + '%';
+    const isChamp = c.is_champion;
+
+    const statCells = statCols.map(s => {
+      const val  = c.stats[s.col];
+      const diff = c.vs_champion ? c.vs_champion[s.col] : null;
+      if (val === null) return '<td>—</td>';
+
+      // diff = team - champion (positive means team is higher than champion)
+      // Color logic per stat direction:
+      //   Higher-is-better (ADJOE, EFG_O, DRB): positive diff → green (team advantage)
+      //   Lower-is-better  (ADJDE, EFG_D, TOR): positive diff → red  (team disadvantage)
+      //   Neutral          (ADJ_T / Tempo):     any diff      → accent (no better/worse)
+      const lowerBetter = new Set(['ADJDE','EFG_D','TOR']);
+      const neutralStat = new Set(['ADJ_T','RAW_T']);
+
+      let diffHtml = '';
+      if (!isChamp && diff !== null && diff !== 0) {
+        const sign = diff > 0 ? '+' : '';
+        let cls;
+        if (neutralStat.has(s.col)) {
+          cls = 'diff-neu';  // tempo: use accent color, neither better nor worse
+        } else if (lowerBetter.has(s.col)) {
+          cls = diff > 0 ? 'diff-neg' : 'diff-pos';  // higher = worse for def stats
+        } else {
+          cls = diff > 0 ? 'diff-pos' : 'diff-neg';  // higher = better for off stats
+        }
+        diffHtml = ` <span class="${cls}">${sign}${diff.toFixed(1)}</span>`;
+      }
+
+      return `<td><span class="stat-main">${val.toFixed(1)}</span>${diffHtml}</td>`;
+    }).join('');
+
+    return `<tr class="${isChamp ? 'champ-row' : ''}">
+      <td>
+        ${isChamp ? '🏆 ' : ''}<strong style="color:${isChamp ? 'var(--accent)' : 'inherit'}">${c.team}</strong>
+        <span class="region-tag" style="margin-left:6px">(${c.seed}) ${c.region}</span>
+      </td>
+      <td style="font-weight:700;color:${probColor(0.5 + c.win_pct)}">${winPct}</td>
+      ${statCells}
+    </tr>`;
+  }).join('');
+
+  analysisRendered = true;
+}
+
+initBracketToggle();
+renderBracket();
+// Pre-sort MC by Winner desc
+currentSort = { col: 'Winner', dir: 'desc' };
+</script>
+</body>
+</html>
