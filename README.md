@@ -4,6 +4,10 @@
 
 A machine learning system that predicts NCAA Tournament outcomes using pre-tournament regular season data. Trained on 12 years of tournament history, the model produces win probabilities for all 63 games, simulates the full bracket, and generates an interactive HTML report, all before a single game is played.
 
+**2026 ACTUAL RESULTS: 80.6% game accuracy · 1,510/1,920 bracket points · 99.7th percentile nationally (ESPN Tournament Challenge)**
+
+**View Complete 2026 Results [here](https://marchmethods.org/results).**
+
 **2025 holdout result: 82.5% game accuracy · 1,320/1,920 bracket points · ~88th percentile nationally (ESPN Tournament Challenge)**
 
 **View Complete 2025 Results [here](https://justin-alger.github.io/March-Methods/results_2025.html).**
@@ -79,7 +83,7 @@ Regular season stats for all Division I teams, sourced from Barttorvik (T-Rank) 
 One row per tournament game, 2013–2025. Columns: `year`, `round`, `winner`, `winner_seed`, `loser`, `loser_seed`, `winner_score`, `loser_score`. First Four games (R68) are excluded. The model operates on the standard 64-team bracket only.
 
 **Dataset summary:**
-- 12 tournament years (2013–2025, excluding 2020)
+- 12 tournament years (2013–2025, excluding 2020). Ultimately used 2017-2025.
 - 756 total games
 - 63 games per year × 12 = 756
 
@@ -216,6 +220,8 @@ Three outcome types:
 - **Correct** — model's pick appeared in the actual game and won
 - **Direct miss** — model's pick appeared but lost (wrong call)
 - **Cascade miss** — model's pick was already eliminated; the slot was worth zero before the game
+
+### For 2026 LIVE Results, go [here](https://marchmethods.org/results).
 
 ### 2025 Bracket Score
 
