@@ -6,7 +6,7 @@ A machine learning system that predicts NCAA Tournament outcomes using pre-tourn
 
 **2026 ACTUAL RESULTS: 80.6% game accuracy · 1,510/1,920 bracket points · 99.7th percentile nationally (ESPN Tournament Challenge)**
 
-**View Complete 2026 Results [here](https://marchmethods.org/results).**
+**View Complete 2026 Results [here](https://marchmethods.org).**
 
 **2025 holdout result: 82.5% game accuracy · 1,320/1,920 bracket points · ~88th percentile nationally (ESPN Tournament Challenge)**
 
@@ -221,7 +221,7 @@ Three outcome types:
 - **Direct miss** — model's pick appeared but lost (wrong call)
 - **Cascade miss** — model's pick was already eliminated; the slot was worth zero before the game
 
-### For 2026 LIVE Results, go [here](https://marchmethods.org/results).
+### For 2026 LIVE Results, go [here](https://marchmethods.org/) and select the "View Results Tracker."
 
 ### 2025 Bracket Score
 
